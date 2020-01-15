@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import axios from 'axios';
+import { ListGroup } from 'react-bootstrap';
+
 
 class Posts extends Component {
   constructor(props) {
@@ -36,15 +38,25 @@ class Posts extends Component {
           <div className="blog__posts">
           {
             data.map(post => (
-              <ul
-                className="blog__title"
+              <ListGroup.Item
                 key={post.id}
-                onClick={() => history.push("/posts/" + post.id)}
-              >
+                onClick={() => history.push("/posts/" + post.id)}>
                 {post.title}
-              </ul>
+              </ListGroup.Item>
             ))
           }
+
+          {/*
+            <ListGroup>
+              data.map()
+              <ListGroup.Item>Cras justo odio</ListGroup.Item>
+              <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item>
+              <ListGroup.Item>Morbi leo risus</ListGroup.Item>
+              <ListGroup.Item>Porta ac consectetur ac</ListGroup.Item>
+              <ListGroup.Item>Vestibulum at eros</ListGroup.Item>
+            </ListGroup>
+          */ }
+
         </div>
       </div>
     )
