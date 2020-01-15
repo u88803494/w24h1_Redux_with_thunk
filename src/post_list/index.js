@@ -1,8 +1,15 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import axios from 'axios';
-import { ListGroup } from 'react-bootstrap';
+import { ListGroup, Button, Spinner } from 'react-bootstrap';
+import './post_list.css';
 
+const ControllerButton = () => (
+  <div className="blog__controller">
+    <Button variant="outline-success">編輯</Button>
+    <Button variant="outline-danger">刪除</Button>
+  </div>
+)
 
 class Posts extends Component {
   constructor(props) {
@@ -21,42 +28,27 @@ class Posts extends Component {
       });
   }
 
-  // 待刪除
-  post = (data, page) => (
-    <div className="blog__post">
-      <ul className="blog__title">{data[page]['title']}</ul>
-      <hr />
-      <div className="blog__article">{data[page]['body']}</div>
-    </div>
-  )
-
   render() {
     const { data } = this.state;
     const { history } = this.props;
+    console.log(data)
     return (
-      <div className="blog">部落格文章
-          <div className="blog__posts">
-          {
+      <div className="blog">
+        <h1>部落格文章</h1>
+        <div className="blog__posts">
+          {data.length ?
             data.map(post => (
-              <ListGroup.Item
-                key={post.id}
-                onClick={() => history.push("/posts/" + post.id)}>
-                {post.title}
+              <ListGroup.Item key={post.id}>
+                <div
+                  className="blog__title"
+                  onClick={() => history.push("/posts/" + post.id)}
+                >
+                  {post.title}
+                </div>
+                <ControllerButton />
               </ListGroup.Item>
-            ))
+            )) : <Spinner animation="border" />
           }
-
-          {/*
-            <ListGroup>
-              data.map()
-              <ListGroup.Item>Cras justo odio</ListGroup.Item>
-              <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item>
-              <ListGroup.Item>Morbi leo risus</ListGroup.Item>
-              <ListGroup.Item>Porta ac consectetur ac</ListGroup.Item>
-              <ListGroup.Item>Vestibulum at eros</ListGroup.Item>
-            </ListGroup>
-          */ }
-
         </div>
       </div>
     )

@@ -4,14 +4,6 @@
   margin: 80px auto 0;
 }
 
-.blog__title {
-  border: 1px solid #000;
-  border-radius: 5px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  cursor: pointer;
-}
-
 .about, .blog, .blog__article, .about__content {
   white-space: pre-line;
 }
@@ -19,8 +11,4 @@
 .blog__article {
   padding: 0 30px;
   margin: 10px 0;
-}
-
-.blog__post > .blog__title {
-  border: 0;
 }

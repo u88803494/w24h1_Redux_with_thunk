@@ -1,0 +1,18 @@
+.blog__title {
+    display: inline-block;
+    width: 80%;
+}
+
+.blog__title:hover {
+    color:#6c757d;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.blog__controller {
+    display: inline-block;
+}
+
+.btn ~ .btn {
+    margin: 10px;
+}
