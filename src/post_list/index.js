@@ -31,22 +31,28 @@ class Posts extends Component {
   render() {
     const { data } = this.state;
     const { history } = this.props;
-    console.log(data)
     return (
       <div className="blog">
-        <h1>部落格文章</h1>
+        <div className="header">
+          <div className="header__title">部落格文章</div>
+          <div className="header__newpost">
+            <Button variant="outline-primary">新增文章</Button>
+          </div>
+        </div>
         <div className="blog__posts">
-          {data.length ?
+          {data.length ? // 後續把 .map 的部份抽出來另外寫過
             data.map(post => (
-              <ListGroup.Item key={post.id}>
-                <div
-                  className="blog__title"
-                  onClick={() => history.push("/posts/" + post.id)}
-                >
-                  {post.title}
-                </div>
-                <ControllerButton />
-              </ListGroup.Item>
+              <div className="blog__post">
+                <ListGroup.Item key={post.id}>
+                  <div
+                    className="blog__title"
+                    onClick={() => history.push("/posts/" + post.id)}
+                  >
+                    {post.title}
+                  </div>
+                  <ControllerButton />
+                </ListGroup.Item>
+              </div>
             )) : <Spinner animation="border" />
           }
         </div>
