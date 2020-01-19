@@ -42,8 +42,10 @@ class Posts extends Component {
         <div className="blog__posts">
           {data.length ? // 後續把 .map 的部份抽出來另外寫過
             data.map(post => (
-              <div className="blog__post">
-                <ListGroup.Item key={post.id}>
+                <ListGroup.Item
+                  key={post.id}
+                  className="blog__post"
+                >
                   <div
                     className="blog__title"
                     onClick={() => history.push("/posts/" + post.id)}
@@ -52,7 +54,6 @@ class Posts extends Component {
                   </div>
                   <ControllerButton />
                 </ListGroup.Item>
-              </div>
             )) : <Spinner animation="border" />
           }
         </div>

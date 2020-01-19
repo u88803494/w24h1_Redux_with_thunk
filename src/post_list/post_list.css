@@ -27,7 +27,7 @@
     text-decoration: underline;
 }
 
-.list-group-item, .blog__controller {
+.blog__post, .blog__controller {
     display: flex;
     justify-content: space-between;
     align-items: center;
