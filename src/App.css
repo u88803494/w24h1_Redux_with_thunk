@@ -3,12 +3,3 @@
   width: 80%;
   margin: 80px auto 0;
 }
-
-.blog, .blog__article, .about__content {
-  white-space: pre-line;
-}
-
-.blog__article {
-  padding: 0 30px;
-  margin: 10px 0;
-}

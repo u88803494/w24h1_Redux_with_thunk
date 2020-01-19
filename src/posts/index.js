@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { Button } from 'react-bootstrap';
+import './posts.css';
 
 const ControllerButton = () => (
   <div className="blog__controller">
@@ -12,6 +13,7 @@ const ControllerButton = () => (
     <Button variant="outline-danger">刪除</Button>
   </div>
 )
+
 class Post extends Component {
   constructor(props) {
     super(props);
