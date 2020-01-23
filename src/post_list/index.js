@@ -33,13 +33,13 @@ class Posts extends Component {
     const { history } = this.props;
     return (
       <div className="blog">
-        <div className="header">
+        <header className="header">
           <div className="header__title">部落格文章</div>
           <div className="header__newpost">
             <Button variant="outline-primary">新增文章</Button>
           </div>
-        </div>
-        <div className="blog__posts">
+        </header>
+        <main className="blog__posts">
           {data.length ? // 後續把 .map 的部份抽出來另外寫過
             data.map(post => (
               <ListGroup.Item
@@ -56,7 +56,7 @@ class Posts extends Component {
               </ListGroup.Item>
             )) : <Spinner animation="border" />
           }
-        </div>
+        </main>
 
       </div>
     )
