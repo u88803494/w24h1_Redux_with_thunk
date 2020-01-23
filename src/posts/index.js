@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { Button } from 'react-bootstrap';
+import { Button, Spinner } from 'react-bootstrap';
 import './posts.css';
 
 const ControllerButton = () => (
@@ -14,8 +14,21 @@ const ControllerButton = () => (
   </div>
 )
 
-const ArticleContent = () => (
-  <div></div>
+const ArticleContent = ({ post, date }) => (
+  <>
+    <header className="article__header">
+      <h1>{post.title}</h1>
+      <div className="article__meta">
+        <div className="article__info">
+          <div className="article__author">作者：{post.author}</div>
+          <div className="article__created-at">發布時間：{date.toString()}</div>
+        </div>
+        <ControllerButton />
+      </div>
+    </header>
+    <hr />
+    <p className="article__body">{post.body}</p>
+  </>
 )
 
 class Post extends Component {
@@ -41,18 +54,13 @@ class Post extends Component {
     const date = new Date(post.createdAt);
     return (
       <div className="article">
-        <header className="article__header">
-          <h1>{post.title ? post.title : 'Loading'}</h1>
-          <div className="article__meta">
-            <div className="article__info">
-              <div className="article__author">作者：{post.author}</div>
-              <div className="article__created-at">發布時間：{date.toString()}</div>
-            </div>
-            <ControllerButton />
-          </div>
-        </header>
-        <hr />
-        <p className="article__body">{post.body}</p>
+        {
+          post.title ?
+            <ArticleContent post={post} date={date} /> :
+            <Spinner animation="border" role="status">
+              <span className="sr-only">Loading...</span>
+            </Spinner>
+        }
       </div>
     );
 

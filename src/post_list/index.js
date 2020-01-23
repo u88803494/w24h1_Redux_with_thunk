@@ -11,6 +11,27 @@ const ControllerButton = () => (
   </div>
 )
 
+const RenderPosts = ({ data, history }) => (
+  <>
+    {
+      data.map(post => (
+        <ListGroup.Item
+          key={post.id}
+          className="blog__post"
+        >
+          <div
+            className="blog__title"
+            onClick={() => history.push("/posts/" + post.id)}
+          >
+            {post.title}
+          </div>
+          <ControllerButton />
+        </ListGroup.Item>
+      ))
+    }
+  </>
+)
+
 class Posts extends Component {
   constructor(props) {
     super(props);
@@ -40,21 +61,10 @@ class Posts extends Component {
           </div>
         </header>
         <main className="blog__posts">
-          {data.length ? // 後續把 .map 的部份抽出來另外寫過
-            data.map(post => (
-              <ListGroup.Item
-                key={post.id}
-                className="blog__post"
-              >
-                <div
-                  className="blog__title"
-                  onClick={() => history.push("/posts/" + post.id)}
-                >
-                  {post.title}
-                </div>
-                <ControllerButton />
-              </ListGroup.Item>
-            )) : <Spinner animation="border" />
+          {
+            data.length ?
+              <RenderPosts data={data} history={history} /> :
+              <Spinner animation="border" />
           }
         </main>
 
