@@ -7,49 +7,7 @@ import PostList from './post_list/';
 import Posts from './posts/';
 import About from './about/';
 import Footer from './footer/';
-
-class BG extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      height: 0,
-    }
-  }
-
-  componentWillMount() {
-    const backgroundHieght = document.body.clientHeight;
-    console.log(backgroundHieght)
-    this.setState({height: backgroundHieght})
-  }
-
-  render() {
-    const {height} = this.state;
-    const style={
-      height: height+100
-    }
-    return (
-      <>
-        {/*遮罩層*/}
-        <div id="cover" style={style} >
-        </div>
-        {/*彈窗*/}
-        <div id="showdiv" >
-          {/*標題*/}
-          <div id="tips" >
-            提示
-          </div>
-          {/*內容*/}
-          <div id="content">
-            js彈窗 js彈出DIV,並使整個頁面背景變暗</div>
-          {/*按鈕*/}
-          <div id="btn">
-            確 定
-          </div>
-        </div>
-      </>
-    )
-  }
-}
+import EditingWindow from './editing_window/';
 
 class App extends React.Component {
   constructor(props) {
@@ -59,16 +17,21 @@ class App extends React.Component {
     }
   }
 
+  bgOut = () => {
+    const { isEditing } = this.state;
+    this.setState({ isEditing: !isEditing })
+  }
+
   render() {
-    const {isEditing} = this.state;
+    const { isEditing } = this.state;
     return (
       <Router>
         <div className="App">
           <Nav />
-          <button 
-          onClick={()=> this.setState({isEditing: !isEditing})}
+          <button
+            onClick={this.bgOut}
           >測試</button>
-          {isEditing && <BG />}
+          {isEditing && <EditingWindow bgOut={this.bgOut} />}
           <Route exact path="/" component={Home} />
           <Route exact path="/posts" component={PostList} />
           <Route path="/about" component={About} />
