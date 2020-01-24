@@ -3,15 +3,16 @@ import { withRouter } from 'react-router-dom';
 import axios from 'axios';
 import { ListGroup, Button, Spinner } from 'react-bootstrap';
 import './post_list.css';
+import EditingWindow from '../editing_window/';
 
-const ControllerButton = () => (
+const ControllerButton = ({ handleEditing }) => (
   <div className="blog__controller">
-    <Button variant="outline-success">編輯</Button>
+    <Button variant="outline-success" onClick={() => handleEditing()} >編輯</Button>
     <Button variant="outline-danger">刪除</Button>
   </div>
 )
 
-const RenderPosts = ({ data, history }) => (
+const RenderPosts = ({ data, history, handleEditing }) => (
   <>
     {
       data.map(post => (
@@ -25,19 +26,32 @@ const RenderPosts = ({ data, history }) => (
           >
             {post.title}
           </div>
-          <ControllerButton />
+          <ControllerButton handleEditing={handleEditing} />
         </ListGroup.Item>
       ))
     }
   </>
 )
 
+
 class Posts extends Component {
   constructor(props) {
     super(props);
     this.state = {
       data: [],
+      isEditing: false, // 預計之後改成 redux 的形式
+      isPublish: false,
     }
+  }
+
+  handleEditing = () => {
+    const { isEditing } = this.state;
+    this.setState({ isEditing: !isEditing })
+  }
+
+  handlePublish = () => {
+    const { isPublish } = this.state;
+    this.setState({ isPublish: !isPublish })
   }
 
   componentDidMount() {
@@ -50,20 +64,31 @@ class Posts extends Component {
   }
 
   render() {
-    const { data } = this.state;
+    const { data, isEditing, isPublish } = this.state;
     const { history } = this.props;
     return (
       <div className="blog">
+        {isEditing && <EditingWindow handleEditing={this.handleEditing} />}
+        {isPublish && <EditingWindow handlePublish={this.handlePublish} />}
         <header className="header">
           <div className="header__title">部落格文章</div>
           <div className="header__newpost">
-            <Button variant="outline-primary">新增文章</Button>
+            <Button
+              variant="outline-primary"
+              onClick={this.handlePublish}
+            >
+              新增文章
+            </Button>
           </div>
         </header>
         <main className="blog__posts">
-          {
+          {/** 判斷是否讀取中 */
             data.length ?
-              <RenderPosts data={data} history={history} /> :
+              <RenderPosts
+                data={data}
+                history={history}
+                handleEditing={this.handleEditing}
+              /> :
               <Spinner animation="border" />
           }
         </main>

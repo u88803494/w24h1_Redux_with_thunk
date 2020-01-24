@@ -9,8 +9,6 @@ const ControllerButton = () => (
     <Link to="/posts" className="blog__contorller--back">
       <Button variant="outline-dark"> back </Button>
     </Link>
-    <Button variant="outline-success">編輯</Button>
-    <Button variant="outline-danger">刪除</Button>
   </div>
 )
 

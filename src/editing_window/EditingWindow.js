@@ -3,7 +3,7 @@ import './editingWindow.css'
 
 class EditingWindow extends React.Component {
   constructor(props) {
-    const backgroundHieght = document.body.clientHeight;
+    const backgroundHieght = document.body.scrollHeight;
     const windowHeight = document.body.clientWidth;
     // constructor 取代 componentWillMount
     super(props);
@@ -16,7 +16,7 @@ class EditingWindow extends React.Component {
     /*const backgroundHieght = document.body.clientHeight;
     console.log(backgroundHieght);
     this.setState({ height: backgroundHieght });*/
-    console.log('willMount');
+    // console.log('willMount');
   }
 
   componentWillUnmount() {
@@ -32,30 +32,38 @@ class EditingWindow extends React.Component {
 
   render() {
     const { height } = this.state;
+    const { handleEditing, handlePublish } = this.props;
+    const isEditing = handleEditing !== undefined; // 判斷當前視窗是否是編輯
     const style = {
-      height: height + 100
+      height: height + 100,
     };
-    const { bgOut } = this.props;
-    
+
     return (
       <>
         <div id="cover" style={style}>
         </div>
-
-        <div id="showdiv">
-
-          <div id="tips">
-            提示
+        <div className="editing">
+          <div className="editing__tips">
+            { isEditing ? "你正在編輯文章" : "你這在新增文章"}
           </div>
+          <div className="editing__title">
+            標題視窗
+            </div>
+          <div className="editing__author">
+            作者
+            </div>
 
-          <div id="content">
-            js彈窗 js彈出DIV,並使整個頁面背景變暗</div>
-
-          <button id="btn" onClick={bgOut}>
-            確 定
+          <div className="editing__content">
+            {`輸入內容
+            js彈窗 js彈出DIV,並使整個頁面背景變暗`}
+          </div>
+          <button className="editing__btn"
+            onClick={isEditing ? handleEditing : handlePublish}>
+            {isEditing ? "關閉編輯" : "關閉新增文章"}
           </button>
         </div>
-      </>);
+      </>
+    );
   }
 }
 
