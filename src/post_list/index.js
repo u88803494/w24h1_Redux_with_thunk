@@ -39,7 +39,7 @@ class Posts extends Component {
     super(props);
     this.state = {
       data: [],
-      isEditing: false, // 預計之後改成 redux 的形式
+      isEditing: true, // 預計之後改成 redux 的形式
       isPublish: false,
     }
   }
@@ -63,6 +63,7 @@ class Posts extends Component {
       });
   }
 
+  /** 之後可以改成兩種呈現方式，條列式格狀顯示 */
   render() {
     const { data, isEditing, isPublish } = this.state;
     const { history } = this.props;

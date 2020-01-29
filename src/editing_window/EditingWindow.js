@@ -1,5 +1,6 @@
 import React from 'react';
-import './editingWindow.css'
+import './editingWindow.css';
+import { Button, Modal } from 'react-bootstrap';
 
 class EditingWindow extends React.Component {
   constructor(props) {
@@ -44,7 +45,7 @@ class EditingWindow extends React.Component {
         </div>
         <div className="editing">
           <div className="editing__tips">
-            { isEditing ? "你正在編輯文章" : "你這在新增文章"}
+            {isEditing ? "你正在編輯文章" : "你這在新增文章"}
           </div>
           <div className="editing__title">
             標題視窗
@@ -61,6 +62,20 @@ class EditingWindow extends React.Component {
             onClick={isEditing ? handleEditing : handlePublish}>
             {isEditing ? "關閉編輯" : "關閉新增文章"}
           </button>
+          <Modal.Dialog>
+            <Modal.Header closeButton>
+              <Modal.Title>Modal title</Modal.Title>
+            </Modal.Header>
+
+            <Modal.Body>
+              <p>Modal body text goes here.</p>
+            </Modal.Body>
+
+            <Modal.Footer>
+              <Button variant="secondary">Close</Button>
+              <Button variant="primary">Save changes</Button>
+            </Modal.Footer>
+          </Modal.Dialog>
         </div>
       </>
     );
