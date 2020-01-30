@@ -20,13 +20,19 @@ class TheNavbar extends React.Component {
 
   handleScroll = (e) => {
     const lastPositonY = this.state.positionY; // 取得舊位置
-    this.setState({ positionY: window.pageYOffset }, () => {
-      console.log( lastPositonY - this.state.positionY );
+    const ScrollWidth = window.pageYOffset - lastPositonY;
+    console.log(ScrollWidth);
+    this.setState({
+      positionY: window.pageYOffset
     }); // 取得新位置
 
     // console.log('scroll', window.pageYOffset);
     // alert("檢測到頁面滾動事件:"+window.pageXOffset+" "+window.pageYOffset);
     // console.log(document.body.scrollTop, document.documentElement.scrollTop);
+  }
+
+  calculateScrollWidth = () => {
+
   }
 
   render() {
