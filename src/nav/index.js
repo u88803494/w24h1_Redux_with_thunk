@@ -1,3 +1,3 @@
-import TheNav from './Nav';
+import TheNavbar from './Nav';
 
-export { TheNav as default };
+export { TheNavbar as default };
