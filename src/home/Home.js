@@ -14,7 +14,7 @@ const SeeMoreButton = ({ className, text, variant }) => (
 const Advantages = ({ avaData }) => (
   <CardGroup>
     {avaData.map(data => (
-      <Card>
+      <Card key={data.url}>
         <Card.Img variant="top" src={data.url} />
         <Card.Body>
           <Card.Title>{data.title}</Card.Title>

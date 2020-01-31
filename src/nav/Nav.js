@@ -1,12 +1,14 @@
 import React from 'react';
 import { Nav, Navbar } from 'react-bootstrap';
+import './nav.css';
 
 class TheNavbar extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       positionY: window.pageYOffset,
-      movedY: 0
+      movedY: 0,
+      isHidden: false,
     }
   }
 
@@ -18,26 +20,45 @@ class TheNavbar extends React.Component {
     window.removeEventListener('scroll', this.handleScroll)
   }
 
-  handleScroll = (e) => {
+  handleScroll = () => {
     const lastPositonY = this.state.positionY; // 取得舊位置
-    const ScrollWidth = window.pageYOffset - lastPositonY;
-    console.log(ScrollWidth);
     this.setState({
-      positionY: window.pageYOffset
-    }); // 取得新位置
-
-    // console.log('scroll', window.pageYOffset);
-    // alert("檢測到頁面滾動事件:"+window.pageXOffset+" "+window.pageYOffset);
-    // console.log(document.body.scrollTop, document.documentElement.scrollTop);
+      positionY: window.pageYOffset,
+    }, () => this.calculateScrollWidth(lastPositonY)); // 取得新位置
   }
 
-  calculateScrollWidth = () => {
+  calculateScrollWidth = (lastPositonY) => {
+    const { movedY } = this.state;
+    const ScrollWidth = window.pageYOffset - lastPositonY; // 當前位置扣掉原始位置的高度
+    this.setState({ movedY: movedY + ScrollWidth, }, this.shouldHidden)
+  }
 
+  shouldHidden = () => {
+    const { movedY, positionY } = this.state;
+    if (movedY >= 100) {
+      this.setState({
+        movedY: 0,
+        isHidden: true,
+      })
+    } else if (movedY <= -200 || positionY <= 35) {
+      this.setState({
+        movedY: 0,
+        isHidden: false,
+      })
+    }
   }
 
   render() {
+    const { isHidden } = this.state;
     return (
-      <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" fixed="top">
+      <Navbar
+        collapseOnSelect
+        expand="lg"
+        bg="dark"
+        variant="dark"
+        fixed="top"
+        className={isHidden && "navbar--hide"}
+      >
         <Navbar.Brand href="/#">React-Bootstrap</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
