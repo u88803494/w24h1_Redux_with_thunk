@@ -1,16 +1,26 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { withRouter } from 'react-router-dom';
 import axios from 'axios';
 import { ListGroup, Button, Spinner } from 'react-bootstrap';
 import './post_list.css';
 import EditingWindow from '../editing_window/';
 
-const ControllerButton = ({ handleEditing }) => (
-  <div className="blog__controller">
-    <Button variant="outline-success" onClick={() => handleEditing()} >編輯</Button>
-    <Button variant="outline-danger">刪除</Button>
-  </div>
-)
+const ControllerButton = ({post}) => {
+  const [editingShow, setEditingShow] = useState(false);
+  return (
+    <div className="blog__controller">
+      <Button variant="outline-success" onClick={() => setEditingShow(true)} >編輯</Button>
+      <Button variant="outline-danger">刪除</Button>
+      {editingShow &&
+        <EditingWindow /** 編輯視窗 */
+          show={editingShow}
+          onHide={() => setEditingShow(false)}
+          state="editing"
+          post={post}
+        />}
+    </div>
+  )
+}
 
 const RenderPosts = ({ data, history, handleEditing }) => (
   <>
@@ -26,7 +36,7 @@ const RenderPosts = ({ data, history, handleEditing }) => (
           >
             {post.title}
           </div>
-          <ControllerButton handleEditing={handleEditing} />
+          <ControllerButton handleEditing={handleEditing} post={post} />
         </ListGroup.Item>
       ))
     }
@@ -38,7 +48,7 @@ class Posts extends Component {
     super(props);
     this.state = {
       data: [],
-      isEditing: true, // 預計之後改成 redux 的形式
+      isEditing: false, // 預計之後改成 redux 的形式
       isPublish: false,
     }
   }
@@ -48,9 +58,8 @@ class Posts extends Component {
     this.setState({ isEditing: !isEditing })
   }
 
-  handlePublish = () => {
-    const { isPublish } = this.state;
-    this.setState({ isPublish: !isPublish })
+  handlePublish = (isPublish) => {
+    this.setState({ isPublish: isPublish })
   }
 
   componentDidMount() {
@@ -68,14 +77,19 @@ class Posts extends Component {
     const { history } = this.props;
     return (
       <div className="blog">
-        {isEditing && <EditingWindow handleEditing={this.handleEditing} />}
-        {isPublish && <EditingWindow handlePublish={this.handlePublish} />}
+        {/* {isEditing && <EditingWindow handleEditing={this.handleEditing} isEditing={isEditing} />} */}
+        {isPublish &&
+          <EditingWindow /* 編輯視窗 */
+            show={isPublish}
+            onHide={() => this.handlePublish(false)}
+            state="publish"
+          />}
         <header className="header">
           <div className="header__title">部落格文章</div>
           <div className="header__newpost">
             <Button
               variant="outline-primary"
-              onClick={this.handlePublish}
+              onClick={() => this.handlePublish(true)}
             >
               新增文章
             </Button>
@@ -92,7 +106,6 @@ class Posts extends Component {
               <Spinner animation="border" />
           }
         </main>
-
       </div>
     )
   }
