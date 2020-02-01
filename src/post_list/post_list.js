@@ -38,7 +38,7 @@ class Posts extends Component {
     super(props);
     this.state = {
       data: [],
-      isEditing: false, // 預計之後改成 redux 的形式
+      isEditing: true, // 預計之後改成 redux 的形式
       isPublish: false,
     }
   }

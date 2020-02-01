@@ -20,6 +20,11 @@ class TheNavbar extends React.Component {
     window.removeEventListener('scroll', this.handleScroll)
   }
 
+  /** 效率可能擔心用太多 setState
+   * 後續可以另外加上判斷來降低多餘的執行
+   * 像是當前顯示 navbar 的時候就把向上滾動的指令忽略
+   * 如果是向下則反
+   */
   handleScroll = () => {
     const lastPositonY = this.state.positionY; // 取得舊位置
     this.setState({
@@ -35,12 +40,12 @@ class TheNavbar extends React.Component {
 
   shouldHidden = () => {
     const { movedY, positionY } = this.state;
-    if (movedY >= 100) {
+    if (movedY >= 80) {
       this.setState({
         movedY: 0,
         isHidden: true,
       })
-    } else if (movedY <= -200 || positionY <= 35) {
+    } else if (movedY <= -175 || positionY <= 35) {
       this.setState({
         movedY: 0,
         isHidden: false,

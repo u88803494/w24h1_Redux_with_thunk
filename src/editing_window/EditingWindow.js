@@ -28,7 +28,7 @@ class EditingWindow extends React.Component {
      * 又或是直接使用 redux 的 action 的方式發送？
      * 總之就是需要看看有沒有辦法確認成功與否
      * 但仔細想想，這次的 api 沒這功能 */
-   /*  console.log('WillUnmonut'); */
+    /*  console.log('WillUnmonut'); */
   }
 
   render() {
@@ -48,7 +48,7 @@ class EditingWindow extends React.Component {
             {isEditing ? "你正在編輯文章" : "你這在新增文章"}
           </div>
           <div className="editing__title">
-            標題視窗
+            標題
             </div>
           <div className="editing__author">
             作者
@@ -65,7 +65,7 @@ class EditingWindow extends React.Component {
           <Modal.Dialog>
             <Modal.Header
               closeButton
-              onClick={isEditing ? handleEditing : handlePublish}
+              className="editing__title"
             >
               <Modal.Title>Modal title</Modal.Title>
             </Modal.Header>

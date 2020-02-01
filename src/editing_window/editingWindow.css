@@ -23,7 +23,8 @@
   left: 0;
   right: 0;
   z-index: 3;
-  background: #fff
+  background: #fff;
+  border-radius: 5px;  
 }
 
 .editing__tips {
@@ -34,7 +35,6 @@
   line-height: 2rem;
   border: 1px solid #999;
   text-align: center;
-
 }
 
 .editing__content {
