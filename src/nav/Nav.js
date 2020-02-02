@@ -3,14 +3,14 @@ import { Nav, Navbar } from 'react-bootstrap';
 import './nav.css';
 
 class TheNavbar extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      positionY: window.pageYOffset,
-      movedY: 0,
-      isHidden: false,
-    }
+constructor(props) {
+  super(props)
+  this.state = {
+    positionY: window.pageYOffset,
+    movedY: 0,
+    isHidden: false,
   }
+}
 
   componentDidMount() {
     window.addEventListener('scroll', this.handleScroll)
