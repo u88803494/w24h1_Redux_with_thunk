@@ -1,40 +1,111 @@
-import React from 'react';
-import './editingWindow.css';
-import { Button, Modal } from 'react-bootstrap';
+import React, { useState } from 'react';
+import './editingWindow.css'; // 暫時無用之後確認無用就刪除
+import { Button, Modal, Form } from 'react-bootstrap';
 
-const EditingWindow = ({ onHide, show, state, post }) => (
-  <Modal
-    size="lg"
-    aria-labelledby="contained-modal-title-vcenter"
-    centered
-    {...{ onHide, show }
+/** 除了新增編輯功能之外，還要有刪除確認功能
+ * 預計統合在一起，可能的話連 component name 都要換掉
+ */
+
+const EditingWindow = ({ onHide, show, state, post }) => {
+  const [thisPost, setThisPost] = useState(post ? post : {})
+
+  const changeBody = (e, dataType) => {
+    const updatePost = Object.assign({}, thisPost); // 執行單層深拷貝
+    switch (dataType) {
+      case 'title':
+        updatePost.title = e.target.value;
+        break;
+      case 'author':
+        updatePost.author = e.target.value;
+        break;
+      case 'body':
+        updatePost.body = e.target.value;
+        break;
+      default:
+    }
+    setThisPost(updatePost)
+  }
+
+  return (
+    <Modal
+      size="lg"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+      {...{ onHide, show }
     /* 不太懂為什麼一定要加 ... 直接寫也會出 bug 只知道等同於下面
       onHide={onHide} show={show}，這樣的寫法是另外變成物件，然後傳給子 component 之後解構嗎
     */}
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          {state === "editing" ? "你正在編輯文章" : "你正在新增文章"}
+        </Modal.Title>
+      </Modal.Header>
+      <Form>
+        <Modal.Body>
+          <Form.Group controlId="formBasicEmail">
+            <Form.Label>標題</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter title"
+              value={thisPost && thisPost.title}
+              onChange={(e) => { changeBody(e, 'title') }} // 似乎可以抽出來，就是用變數名稱取代
+            />
+          </Form.Group>
+          <Form.Group controlId="formBasicPassword">
+            <Form.Label>作者</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="author/作者"
+              value={thisPost && thisPost.author}
+              onChange={(e) => { changeBody(e, 'author') }}
+            />
+          </Form.Group>
+          <Form.Group controlId="exampleForm.ControlTextarea1">
+            <Form.Label>內文</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows="5"
+              placeholder="輸入內文"
+              value={thisPost && thisPost.body}
+              onChange={(e) => { changeBody(e, 'body') }}
+            />
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="outline-secondary" onClick={onHide}>Close</Button>
+          <Button variant="outline-primary" onClick={() => console.log('送出')} > Save changes</Button>
+        </Modal.Footer>
+      </Form>
+    </Modal>
+    /* 編輯送出之後，還要讓整個資料可以改變 */
+  );
+}
 
-  >
-    {console.log(post)}
-    <Modal.Header closeButton>
-      <Modal.Title id="contained-modal-title-vcenter">
-        {state === "editing" ? "你正在編輯文章" : "你正在新增文章"/* 可改成 post 判斷?但一多就不行 */}
-      </Modal.Title>
-    </Modal.Header>
-    <Modal.Body>
-      <h4>Centered Modal</h4>
-      <p>
-        Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
-        dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac
-        consectetur ac, vestibulum at eros.
-        </p>
-    </Modal.Body>
-    <Modal.Footer>
-      <Button variant="outline-secondary" onClick={onHide}>Close</Button>
-      <Button variant="outline-primary" onClick={() => console.log('送出')} > Save changes</Button>
-    </Modal.Footer>
-  </Modal>
-);
 
-
+const DeleteWindow = ({ onHide, show, state, post }) => {
+  return (
+    <Modal
+      size="lg"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+      {...{ onHide, show }}
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          警告！你正在刪除文章
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        你確定要刪除文章嗎？
+        </Modal.Body>
+      <Modal.Footer>
+        <Button variant="outline-secondary" onClick={onHide}>不了，我不要刪除</Button>
+        <Button variant="outline-primary" onClick={() => console.log(`已刪：${post.id}`)} > 是的，我要刪除 </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+}
 /*
 class EditingWindow extends React.Component {
   constructor(props) {
@@ -125,4 +196,4 @@ render() {
 }
 **/
 
-export default EditingWindow;
+export { EditingWindow, DeleteWindow };

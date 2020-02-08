@@ -1,3 +1,1 @@
-import EditingWindow from './EditingWindow';
-
-export { EditingWindow as default };
+export {EditingWindow, DeleteWindow} from './EditingWindow';

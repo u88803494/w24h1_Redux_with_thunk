@@ -3,14 +3,14 @@ import { Nav, Navbar } from 'react-bootstrap';
 import './nav.css';
 
 class TheNavbar extends React.Component {
-constructor(props) {
-  super(props)
-  this.state = {
-    positionY: window.pageYOffset,
-    movedY: 0,
-    isHidden: false,
+  constructor(props) {
+    super(props)
+    this.state = {
+      positionY: window.pageYOffset,
+      movedY: 0,
+      isHidden: false,
+    }
   }
-}
 
   componentDidMount() {
     window.addEventListener('scroll', this.handleScroll)
@@ -24,6 +24,8 @@ constructor(props) {
    * 後續可以另外加上判斷來降低多餘的執行
    * 像是當前顯示 navbar 的時候就把向上滾動的指令忽略
    * 如果是向下則反
+   * 另外一個 bug 是無法根據 hashtag 的東西來高亮使用中的分頁
+   * 這部份跟移除 router 有關系，等到作業的最後再來處理就好
    */
   handleScroll = () => {
     const lastPositonY = this.state.positionY; // 取得舊位置
