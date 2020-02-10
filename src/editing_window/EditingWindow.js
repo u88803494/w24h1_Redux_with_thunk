@@ -7,7 +7,8 @@ import { Button, Modal, Form } from 'react-bootstrap';
  */
 
 const EditingWindow = ({ onHide, show, state, post }) => {
-  const [thisPost, setThisPost] = useState(post ? post : {})
+  const newPost = { title: '', author: '', body: '', }
+  const [thisPost, setThisPost] = useState(post ? post : newPost)
 
   const changeBody = (e, dataType) => {
     const updatePost = Object.assign({}, thisPost); // 執行單層深拷貝
@@ -74,7 +75,7 @@ const EditingWindow = ({ onHide, show, state, post }) => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="outline-secondary" onClick={onHide}>Close</Button>
-          <Button variant="outline-primary" onClick={() => console.log('送出')} > Save changes</Button>
+          <Button variant="outline-primary" onClick={() => console.log('送出', thisPost)} > Save changes</Button>
         </Modal.Footer>
       </Form>
     </Modal>
