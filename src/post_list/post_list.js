@@ -17,14 +17,14 @@ const ControllerButton = ({ post }) => {
         <EditingWindow /** 編輯視窗 */
           show={editingShow}
           onHide={() => setEditingShow(false)}
-          state="editing"
+          status="editing"
           post={post}
         />}
       {deleteShow &&
         <DeleteWindow 
           show={deleteShow}
           onHide={() => setDeleteShow(false)}
-          state="delete"
+          status="delete"
           post={post}
         />}
     </div>
