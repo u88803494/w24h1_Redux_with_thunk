@@ -6,25 +6,15 @@ import { Button, Modal, Form } from 'react-bootstrap';
  * 預計統合在一起，可能的話連 component name 都要換掉
  */
 
-const EditingWindow = ({ onHide, show, state, post }) => {
+const EditingWindow = ({ onHide, show, post, status }) => {
   const newPost = { title: '', author: '', body: '', }
   const [thisPost, setThisPost] = useState(post ? post : newPost)
 
-  const changeBody = (e, dataType) => {
-    const updatePost = Object.assign({}, thisPost); // 執行單層深拷貝
-    switch (dataType) {
-      case 'title':
-        updatePost.title = e.target.value;
-        break;
-      case 'author':
-        updatePost.author = e.target.value;
-        break;
-      case 'body':
-        updatePost.body = e.target.value;
-        break;
-      default:
-    }
-    setThisPost(updatePost)
+  const changePost = (e) => {
+    setThisPost({
+      ...thisPost,
+      [e.target.name]: e.target.value,
+    })
   }
 
   return (
@@ -33,13 +23,13 @@ const EditingWindow = ({ onHide, show, state, post }) => {
       aria-labelledby="contained-modal-title-vcenter"
       centered
       {...{ onHide, show }
-    /* 不太懂為什麼一定要加 ... 直接寫也會出 bug 只知道等同於下面
+      /* 不太懂為什麼一定要加 ... 直接寫也會出 bug 只知道等同於下面
       onHide={onHide} show={show}，這樣的寫法是另外變成物件，然後傳給子 component 之後解構嗎
-    */}
+      */}
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          {state === "editing" ? "你正在編輯文章" : "你正在新增文章"}
+          {status === "editing" ? "你正在編輯文章" : "你正在新增文章"}
         </Modal.Title>
       </Modal.Header>
       <Form>
@@ -47,35 +37,42 @@ const EditingWindow = ({ onHide, show, state, post }) => {
           <Form.Group controlId="formBasicEmail">
             <Form.Label>標題</Form.Label>
             <Form.Control
+              name="title"
               type="text"
               placeholder="Enter title"
               value={thisPost && thisPost.title}
-              onChange={(e) => { changeBody(e, 'title') }} // 似乎可以抽出來，就是用變數名稱取代
+              onChange={changePost}
             />
           </Form.Group>
           <Form.Group controlId="formBasicPassword">
             <Form.Label>作者</Form.Label>
             <Form.Control
+              name="author"
               type="text"
               placeholder="author/作者"
               value={thisPost && thisPost.author}
-              onChange={(e) => { changeBody(e, 'author') }}
+              onChange={changePost}
             />
           </Form.Group>
           <Form.Group controlId="exampleForm.ControlTextarea1">
             <Form.Label>內文</Form.Label>
             <Form.Control
+              name="body"
               as="textarea"
               rows="5"
               placeholder="輸入內文"
               value={thisPost && thisPost.body}
-              onChange={(e) => { changeBody(e, 'body') }}
+              onChange={changePost}
             />
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="outline-secondary" onClick={onHide}>Close</Button>
-          <Button variant="outline-primary" onClick={() => console.log('送出', thisPost)} > Save changes</Button>
+          <Button variant="outline-secondary" onClick={onHide}>
+            Close
+          </Button>
+          <Button variant="outline-primary" onClick={() => console.log('送出', thisPost)}>
+            Save changes
+          </Button>
         </Modal.Footer>
       </Form>
     </Modal>
@@ -83,8 +80,7 @@ const EditingWindow = ({ onHide, show, state, post }) => {
   );
 }
 
-
-const DeleteWindow = ({ onHide, show, state, post }) => {
+const DeleteWindow = ({ onHide, show, post }) => {
   return (
     <Modal
       size="lg"
@@ -99,10 +95,14 @@ const DeleteWindow = ({ onHide, show, state, post }) => {
       </Modal.Header>
       <Modal.Body>
         你確定要刪除文章嗎？
-        </Modal.Body>
+      </Modal.Body>
       <Modal.Footer>
-        <Button variant="outline-secondary" onClick={onHide}>不了，我不要刪除</Button>
-        <Button variant="outline-primary" onClick={() => console.log(`已刪：${post.id}`)} > 是的，我要刪除 </Button>
+        <Button variant="outline-secondary" onClick={onHide}>
+          不了，我不要刪除
+          </Button>
+        <Button variant="outline-primary" onClick={() => console.log(`已刪：${post.id}`)} >
+          是的，我要刪除
+        </Button>
       </Modal.Footer>
     </Modal>
   );
