@@ -3,35 +3,42 @@ import { withRouter } from 'react-router-dom';
 import axios from 'axios';
 import { ListGroup, Button, Spinner } from 'react-bootstrap';
 import './post_list.css';
-import { EditingWindow,  DeleteWindow } from '../editing_window/';
+import { EditingWindow, DeleteWindow } from '../editing_window/';
 
-const ControllerButton = ({ post }) => {
+const ControllerButton = ({ post, handleChangePosts }) => {
   const [editingShow, setEditingShow] = useState(false);
   const [deleteShow, setDeleteShow] = useState(false); // 之後新處理
 
   return (
     <div className="blog__controller">
       <Button variant="outline-success" onClick={() => setEditingShow(true)} >編輯</Button>
-      <Button variant="outline-danger" onClick={() => setDeleteShow(true)}>刪除</Button>
-      {editingShow &&
+      {
+        editingShow &&
         <EditingWindow /** 編輯視窗 */
           show={editingShow}
           onHide={() => setEditingShow(false)}
           status="editing"
           post={post}
-        />}
-      {deleteShow &&
-        <DeleteWindow 
+          handleChangePosts={handleChangePosts}
+        />
+      }
+
+      <Button variant="outline-danger" onClick={() => setDeleteShow(true)}>刪除</Button>
+      {
+        deleteShow &&
+        <DeleteWindow
           show={deleteShow}
           onHide={() => setDeleteShow(false)}
           status="delete"
           post={post}
-        />}
+          handleChangePosts={handleChangePosts}
+        />
+      }
     </div>
   )
 }
 
-const RenderPosts = ({ data, history, handleEditing }) => (
+const RenderPosts = ({ data, history, handleChangePosts }) => (
   <>
     {
       data.map(post => (
@@ -45,7 +52,7 @@ const RenderPosts = ({ data, history, handleEditing }) => (
           >
             {post.title}
           </div>
-          <ControllerButton handleEditing={handleEditing} post={post} />
+          <ControllerButton handleChangePosts={handleChangePosts} post={post} />
         </ListGroup.Item>
       ))
     }
@@ -57,12 +64,18 @@ class Posts extends Component {
     super(props);
     this.state = {
       data: [],
-      isPublish: false,
+      isCreate: false,
     }
   }
 
-  handlePublish = (isPublish) => {
-    this.setState({ isPublish, })
+  handleCreate = (isCreate) => {
+    this.setState({ isCreate, })
+  }
+
+  handleChangePosts = (chagneMethod, changeData) => {
+    /** 第一個變數是變更的方式，第二個變更的資料 */
+    console.log('changed', this.state.data);
+    console.log(chagneMethod, changeData ? changeData : '新增無 data');
   }
 
   componentDidMount() {
@@ -76,25 +89,28 @@ class Posts extends Component {
 
   /** 之後可以改成兩種呈現方式，條列式格狀顯示 */
   render() {
-    const { data, isPublish } = this.state;
+    const { data, isCreate } = this.state;
     const { history } = this.props;
     return (
       <div className="blog">
-        {isPublish &&
-          <EditingWindow /* 編輯視窗 */
-            show={isPublish}
-            onHide={() => this.handlePublish(false)}
-            state="publish"
-          />}
         <header className="header">
           <div className="header__title">部落格文章</div>
           <div className="header__newpost">
             <Button
               variant="outline-primary"
-              onClick={() => this.handlePublish(true)}
+              onClick={() => this.handleCreate(true)}
             >
               新增文章
             </Button>
+            {
+              isCreate &&
+              <EditingWindow /* 新增共用編輯視窗 */
+                show={isCreate}
+                onHide={() => this.handleCreate(false)}
+                status="create"
+                handleChangePosts={this.handleChangePosts}
+              />
+            }
           </div>
         </header>
         <main className="blog__posts">
@@ -103,7 +119,7 @@ class Posts extends Component {
               <RenderPosts
                 data={data}
                 history={history}
-                handleEditing={this.handleEditing}
+                handleChangePosts={this.handleChangePosts}
               /> :
               <Spinner animation="border" />
           }

@@ -6,7 +6,7 @@ import { Button, Modal, Form } from 'react-bootstrap';
  * 預計統合在一起，可能的話連 component name 都要換掉
  */
 
-const EditingWindow = ({ onHide, show, post, status }) => {
+const EditingWindow = ({ onHide, show, post, status, handleChangePosts }) => {
   const newPost = { title: '', author: '', body: '', }
   const [thisPost, setThisPost] = useState(post ? post : newPost)
 
@@ -70,7 +70,7 @@ const EditingWindow = ({ onHide, show, post, status }) => {
           <Button variant="outline-secondary" onClick={onHide}>
             Close
           </Button>
-          <Button variant="outline-primary" onClick={() => console.log('送出', thisPost)}>
+          <Button variant="outline-primary" onClick={() => handleChangePosts(status, post)}>
             Save changes
           </Button>
         </Modal.Footer>
@@ -80,7 +80,7 @@ const EditingWindow = ({ onHide, show, post, status }) => {
   );
 }
 
-const DeleteWindow = ({ onHide, show, post }) => {
+const DeleteWindow = ({ onHide, show, post, status, handleChangePosts }) => {
   return (
     <Modal
       size="lg"
@@ -100,7 +100,7 @@ const DeleteWindow = ({ onHide, show, post }) => {
         <Button variant="outline-secondary" onClick={onHide}>
           不了，我不要刪除
           </Button>
-        <Button variant="outline-primary" onClick={() => console.log(`已刪：${post.id}`)} >
+        <Button variant="outline-primary" onClick={() => handleChangePosts(status, post)} >
           是的，我要刪除
         </Button>
       </Modal.Footer>
