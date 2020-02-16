@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './editingWindow.css'; // 暫時無用之後確認無用就刪除
 import { Button, Modal, Form } from 'react-bootstrap';
+import { deletePost } from '../WebAPI';
 
 /** 除了新增編輯功能之外，還要有刪除確認功能
  * 預計統合在一起，可能的話連 component name 都要換掉
@@ -67,11 +68,17 @@ const EditingWindow = ({ onHide, show, post, status, handleChangePosts }) => {
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="outline-secondary" onClick={onHide}>
+          <Button
+            variant="outline-secondary"
+            onClick={onHide}
+          >
             Close
           </Button>
-          <Button variant="outline-primary" onClick={() => handleChangePosts(status, post)}>
-            Save changes
+          <Button
+            variant="outline-primary"
+            onClick={() => handleChangePosts(status, thisPost)}
+          >
+            {status === 'editing' ? '儲存文章' : '新增文章'}
           </Button>
         </Modal.Footer>
       </Form>
@@ -100,11 +107,21 @@ const DeleteWindow = ({ onHide, show, post, status, handleChangePosts }) => {
         <Button variant="outline-secondary" onClick={onHide}>
           不了，我不要刪除
           </Button>
-        <Button variant="outline-primary" onClick={() => handleChangePosts(status, post)} >
+        <Button variant="outline-primary" onClick={() => {
+          handleChangePosts(status, post)
+          deletePost(post.id)
+            .then(res => console.log(res))
+        }} >
+          {/** loading 畫面寫法，另外開一個狀態是表示送出中，
+           * 然後 cdu 的時候就偵測這個直有沒有改變，或是偵測有無按下確認刪除
+           * 有的話就發出 Ajax，然後 ajax 的 cb 就放變更成功失敗訊息的 component
+           * 並在幾秒後執行關閉彈出視窗
+           */}
           是的，我要刪除
         </Button>
       </Modal.Footer>
     </Modal>
+    
   );
 }
 /*

@@ -1,9 +1,9 @@
 import React, { Component, useState } from 'react';
 import { withRouter } from 'react-router-dom';
-import axios from 'axios';
 import { ListGroup, Button, Spinner } from 'react-bootstrap';
 import './post_list.css';
 import { EditingWindow, DeleteWindow } from '../editing_window/';
+import { getPosts } from '../WebAPI';
 
 const ControllerButton = ({ post, handleChangePosts }) => {
   const [editingShow, setEditingShow] = useState(false);
@@ -66,29 +66,59 @@ class Posts extends Component {
       data: [],
       isCreate: false,
     }
+    this.id = 1;
   }
 
   handleCreate = (isCreate) => {
     this.setState({ isCreate, })
   }
 
-  handleChangePosts = (chagneMethod, changeData) => {
-    /** 第一個變數是變更的方式，第二個變更的資料 */
-    console.log('changed', this.state.data);
-    console.log(chagneMethod, changeData ? changeData : '新增無 data');
+  handleChangePosts = (method, changeData) => {
+    /** 第一個變數是方式，第二個變更的資料 */
+    const { data } = this.state;
+    switch (method) {
+      case 'create':
+        this.setState({
+          data: [...data, {
+            ...changeData,
+            createdAt: new Date().getTime(), // 取得當前的 timestamp，雖然應該會跟伺服器上的不同
+            id: this.id,
+          }],
+        })
+        this.id += 1;
+        break;
+      case 'editing':
+        this.setState({
+          data: data.map((post) => {
+            if (post.id !== changeData.id) return post;
+            return {
+              ...post,
+              ...changeData,
+            };
+          })
+        });
+        break;
+      case 'delete':
+        this.setState({
+          data: data.filter(post => post.id !== changeData.id)
+        })
+        break;
+      default:
+        console.log('一定是搞錯了什麼');
+    }
   }
 
   componentDidMount() {
-    axios.get('https://qootest.com/posts')
+    getPosts()
       .then(res => {
         this.setState({
           data: res.data.filter(({ title, author }) => title && author),
         }); // 太多無用資料，決定先篩選，才使用。
+        this.id = res.data.length !== 0 ? res.data[res.data.length - 1].id + 1 : 1;
       });
   }
 
-  /** 之後可以改成兩種呈現方式，條列式格狀顯示 */
-  render() {
+  render() { /** 之後可以改成兩種呈現方式，條列式格狀顯示 */
     const { data, isCreate } = this.state;
     const { history } = this.props;
     return (
