@@ -109,7 +109,7 @@ class Posts extends Component {
   }
 
   componentDidMount() {
-    getPosts()
+    getPosts() // call api 也許可以改在 RenderPosts 那裡
       .then(res => {
         this.setState({
           data: res.data.filter(({ title, author }) => title && author),

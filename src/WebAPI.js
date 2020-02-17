@@ -13,4 +13,4 @@ export const createPost = post =>
   axios.post('https://qootest.com/posts/', post)
 
 export const updatePost = post =>
-  axios.put('https://qootest.com/posts' + post.id, post)
+  axios.put('https://qootest.com/posts/' + post.id, post)
