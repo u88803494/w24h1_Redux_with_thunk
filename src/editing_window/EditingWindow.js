@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
 import * as webAPI from '../WebAPI';
 
@@ -95,17 +95,25 @@ const EditingWindow = ({ onHide, show, post, status, handleChangePosts }) => {
 }
 
 const DeleteWindow = ({ onHide, show, post, status, handleChangePosts }) => {
-  const handleDelete = (postId) => {
-    webAPI.deletePost(postId) // 改變伺服器
-      .then(res => res.state < 300 && console.log('成功'))
-      .catch(res => res.state !== 200 && console.log('失敗'))
-    handleChangePosts(status, post) // 改變父狀態
-    /** 後續改進：
-     * loading 畫面寫法，另外開一個狀態是表示送出中，
-     * 然後 cdu 的時候就偵測這個值有沒有改變，或是偵測有無按下確認刪除
-     * 有的話就發出 Ajax，然後 ajax 的 cb 就放變更成功失敗訊息的 component
-     * 並在幾秒後執行關閉彈出視窗
-     */
+  const [loadingState, setLoadingState] = useState('是的，我要刪除');
+
+  useEffect(() => {
+    console.log('cdu')
+    if (loadingState === '刪除中........') {
+      webAPI.deletePost(post.id) // 改變伺服器
+        .then(res => res.status < 300 && handleChangePosts(status, post) /* 改變父狀態 */)
+        .catch(() => setLoadingState('刪除失敗！'))
+      /** 後續改進：
+       * loading 畫面寫法，另外開一個狀態是表示送出中，
+       * 然後 cdu 的時候就偵測這個值有沒有改變，或是偵測有無按下確認刪除
+       * 有的話就發出 Ajax，然後 ajax 的 cb 就放變更成功失敗訊息的 component
+       * 並在幾秒後執行關閉彈出視窗 使用 setTimeout 在幾秒後呼叫 handleChangePosts，並另外打包
+       */
+    }
+  }, [loadingState, handleChangePosts, post, status]); /* 待研究為什麼需要加入後三者才不報錯 */
+
+  const handleDelete = () => {
+    setLoadingState('刪除中........')
   }
 
   return (
@@ -127,8 +135,12 @@ const DeleteWindow = ({ onHide, show, post, status, handleChangePosts }) => {
         <Button variant="outline-secondary" onClick={onHide}>
           不了，我不要刪除
           </Button>
-        <Button variant="outline-primary" onClick={() => handleDelete(post.id)} >
-          是的，我要刪除
+        <Button
+          variant="outline-primary"
+          onClick={handleDelete}
+          disabled={loadingState !== '是的，我要刪除'}
+        >
+          {loadingState}
         </Button>
       </Modal.Footer>
     </Modal>

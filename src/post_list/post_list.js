@@ -7,11 +7,14 @@ import { getPosts } from '../WebAPI';
 
 const ControllerButton = ({ post, handleChangePosts }) => {
   const [editingShow, setEditingShow] = useState(false);
-  const [deleteShow, setDeleteShow] = useState(false); // 之後新處理
+  const [deleteShow, setDeleteShow] = useState(false);
+
+  const handleEdit = () => setEditingShow(true); // 另外寫出來省資源
+  const handleDelete = () => setDeleteShow(true);
 
   return (
     <div className="blog__controller">
-      <Button variant="outline-success" onClick={() => setEditingShow(true)} >編輯</Button>
+      <Button variant="outline-success" onClick={handleEdit} >編輯</Button>
       {
         editingShow &&
         <EditingWindow /** 編輯視窗 */
@@ -23,7 +26,7 @@ const ControllerButton = ({ post, handleChangePosts }) => {
         />
       }
 
-      <Button variant="outline-danger" onClick={() => setDeleteShow(true)}>刪除</Button>
+      <Button variant="outline-danger" onClick={handleDelete}>刪除</Button>
       {
         deleteShow &&
         <DeleteWindow
@@ -35,8 +38,8 @@ const ControllerButton = ({ post, handleChangePosts }) => {
         />
       }
     </div>
-  )
-}
+  );
+};
 
 const RenderPosts = ({ data, history, handleChangePosts }) => (
   <>
