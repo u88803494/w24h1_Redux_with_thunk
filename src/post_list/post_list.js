@@ -113,7 +113,7 @@ class Posts extends Component {
       .then(res => {
         this.setState({
           data: res.data.filter(({ title, author }) => title && author),
-        }); // 太多無用資料，決定先篩選，才使用。
+        }); // 太多無用資料，決定先篩選，才使用。之後想改變一下排序
         this.id = res.data.length !== 0 ? res.data[res.data.length - 1].id + 1 : 1;
       });
   }

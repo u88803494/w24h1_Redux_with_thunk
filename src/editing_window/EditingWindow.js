@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './editingWindow.css'; // 暫時無用之後確認無用就刪除
 import { Button, Modal, Form } from 'react-bootstrap';
-import { deletePost } from '../WebAPI';
+import * as webAPI from '../WebAPI';
 
 /** 除了新增編輯功能之外，還要有刪除確認功能
  * 預計統合在一起，可能的話連 component name 都要換掉
@@ -16,6 +16,14 @@ const EditingWindow = ({ onHide, show, post, status, handleChangePosts }) => {
       ...thisPost,
       [e.target.name]: e.target.value,
     })
+  }
+
+  const handlePost = () => {
+    handleChangePosts(status, thisPost);
+    (status === 'create' ?
+      webAPI.createPost(thisPost) : webAPI.updatePost(thisPost)) // 多個括號共用 .then
+        .then(res => res.status <= 300 && onHide())
+        .catch(err => console.log(err)) // .then .catch 是否會自己判斷 status?
   }
 
   return (
@@ -76,7 +84,7 @@ const EditingWindow = ({ onHide, show, post, status, handleChangePosts }) => {
           </Button>
           <Button
             variant="outline-primary"
-            onClick={() => handleChangePosts(status, thisPost)}
+            onClick={handlePost}
           >
             {status === 'editing' ? '儲存文章' : '新增文章'}
           </Button>
@@ -88,6 +96,19 @@ const EditingWindow = ({ onHide, show, post, status, handleChangePosts }) => {
 }
 
 const DeleteWindow = ({ onHide, show, post, status, handleChangePosts }) => {
+  const handleDelete = (postId) => {
+    handleChangePosts(status, post) // 改變父狀態
+    webAPI.deletePost(postId) // 改變伺服器
+      .then(res => res.state === 200 && console.log('成功'))
+      .catch(res => res.state !== 200 && console.log('失敗'))
+    /** 後續改進：
+     * loading 畫面寫法，另外開一個狀態是表示送出中，
+     * 然後 cdu 的時候就偵測這個值有沒有改變，或是偵測有無按下確認刪除
+     * 有的話就發出 Ajax，然後 ajax 的 cb 就放變更成功失敗訊息的 component
+     * 並在幾秒後執行關閉彈出視窗
+     */
+  }
+
   return (
     <Modal
       size="lg"
@@ -107,21 +128,12 @@ const DeleteWindow = ({ onHide, show, post, status, handleChangePosts }) => {
         <Button variant="outline-secondary" onClick={onHide}>
           不了，我不要刪除
           </Button>
-        <Button variant="outline-primary" onClick={() => {
-          handleChangePosts(status, post)
-          deletePost(post.id)
-            .then(res => console.log(res))
-        }} >
-          {/** loading 畫面寫法，另外開一個狀態是表示送出中，
-           * 然後 cdu 的時候就偵測這個直有沒有改變，或是偵測有無按下確認刪除
-           * 有的話就發出 Ajax，然後 ajax 的 cb 就放變更成功失敗訊息的 component
-           * 並在幾秒後執行關閉彈出視窗
-           */}
+        <Button variant="outline-primary" onClick={() => handleDelete(post.id)} >
           是的，我要刪除
         </Button>
       </Modal.Footer>
     </Modal>
-    
+
   );
 }
 /*
