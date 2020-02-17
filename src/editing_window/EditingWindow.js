@@ -22,8 +22,8 @@ const EditingWindow = ({ onHide, show, post, status, handleChangePosts }) => {
     handleChangePosts(status, thisPost);
     (status === 'create' ?
       webAPI.createPost(thisPost) : webAPI.updatePost(thisPost)) // 多個括號共用 .then
-        .then(res => res.status <= 300 && onHide())
-        .catch(err => console.log(err)) // .then .catch 是否會自己判斷 status?
+      .then(res => res.status <= 300 && onHide())
+      .catch(err => console.log(err)) // .then .catch 是否會自己判斷 status?
   }
 
   return (
