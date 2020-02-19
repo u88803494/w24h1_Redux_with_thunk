@@ -182,7 +182,7 @@ const DeleteWindow = ({ onHide, show, post, status, handleChangePosts }) => {
           不了，我不要刪除
           </Button>
         <Button
-          variant="outline-primary"
+          variant="outline-danger"
           onClick={handleDelete}
           disabled={loadingState !== '是的，我要刪除'}
         >
