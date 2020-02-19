@@ -82,11 +82,13 @@ class Posts extends Component {
     switch (method) {
       case 'create':
         this.setState({
-          data: [...data, {
+          data: [{
             ...changeData,
             createdAt: new Date().getTime(), // 取得當前的 timestamp，雖然應該會跟伺服器上的不同
             id: this.id,
-          }],
+          },
+          ...data, // 放後面才能符合逆排序
+          ],
         })
         this.id += 1;
         break;
@@ -115,8 +117,10 @@ class Posts extends Component {
     getPosts() // call api 也許可以改在 RenderPosts 那裡
       .then(res => {
         this.setState({
-          data: res.data.filter(({ title, author }) => title && author),
-        }); // 太多無用資料，決定先篩選，才使用。之後想改變一下排序
+          data: res.data
+            .filter(({ title, author, body }) => title && author && body)
+            .sort((a, b) => b.id - a.id),
+        }); // 太多無用資料，決定先篩選之後逆排序
         this.id = res.data.length !== 0 ? res.data[res.data.length - 1].id + 1 : 1;
       });
   }

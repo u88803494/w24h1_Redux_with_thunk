@@ -13,4 +13,4 @@ export const updatePost = post =>
   axios.put('https://qootest.com/posts/' + post.id, post)
 
 export const deletePost = postId =>
-  axios.delete('https://qootest.com/posts' + postId)
+  axios.delete('https://qootest.com/posts/' + postId)

@@ -1,29 +1,56 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
+import './editing_window.css';
 import * as webAPI from '../WebAPI';
 
 const EditingWindow = ({ onHide, show, post, status, handleChangePosts }) => {
-  const newPost = { title: '', author: '', body: '', }
-  const [thisPost, setThisPost] = useState(post ? post : newPost)
+  const newPost = { title: '', author: '', body: '', };
+  const defaultEmpty = { title: false, author: false, body: false, }; 
+  const defaultSubmitType = { canSubmit: true, status: '', };
+
+  const [thisPost, setThisPost] = useState(post ? post : newPost);
+  const [isEmpty, setEmpty] = useState(defaultEmpty); // 為了一開始不偵測
+  const [submitType, setSubmitType] = useState(defaultSubmitType);
+  // 一開始先不偵測，因為本身載入的都是有內容的。
 
   const changePost = (e) => {
-    setThisPost({
-      ...thisPost,
-      [e.target.name]: e.target.value,
-    })
-    /** 後續可以實作偵測空值，也就是說當空值得時候，
-     * 送出按鈕不能使用，或是跳出紅色警告字 */
+    if (!e.target.value) { // 輸入時確認是否為空
+      setEmpty({ ...isEmpty, [e.target.name]: true, })
+    } else {
+      setEmpty({ ...isEmpty, [e.target.name]: false, })
+    }
+
+    setThisPost({ ...thisPost, [e.target.name]: e.target.value, })
   }
 
-  const handlePost = () => {
-    (status === 'create' ?
-      webAPI.createPost(thisPost) : webAPI.updatePost(thisPost)) // 多個括號共用 .then
-      .then(res => res.status <= 300 && onHide())
-      .catch(err => console.log(err)) // .then .catch 是否會自己判斷 status?
+  const handleSubmit = () => {
+    if (!thisPost.title || !thisPost.author || !thisPost.body) {
+      setSubmitType({ canSubmit: false, status: '資料不全，無法送出，繼續完成資料才可送出', });
+      return;
+    }
 
-    handleChangePosts(status, thisPost); // 改變畫面上的資料
-    /** 可以在優化確認到伺服器上的資料之後，才改變畫面上的資料，但這似乎必做才對XD */
+    const whichAPI = (thisPost, status) => status === 'create' ?
+      webAPI.createPost(thisPost) : webAPI.updatePost(thisPost)
+
+    const changePost = (status, thisPost) => { // 像這個想詢問一下，可以往上獲取資料，我還需要特別傳入嗎？
+      handleChangePosts(status, thisPost); // 改變畫面上的資料
+      onHide(); /** 進一步可優化顯示傳送中，成功後顯示成功 */
+    }
+
+    const onError = (err) => {
+      setSubmitType({ canSubmit: false, status: `發生問題無法送出 ${err}`, });
+    }
+
+    whichAPI(thisPost, status) // 多個括號共用 .then
+      .then(res => res.status <= 300 && changePost(status, thisPost))
+      .catch(err => onError(err)) // .then .catch 是否會自己判斷 status?
   }
+
+  useEffect(() => {
+    if (thisPost.title && thisPost.author && thisPost.body) {
+      setSubmitType({ canSubmit: true, status: '', });
+    } // render 前檢測值是否為空
+  }, [thisPost])
 
   return (
     <Modal
@@ -42,8 +69,13 @@ const EditingWindow = ({ onHide, show, post, status, handleChangePosts }) => {
       </Modal.Header>
       <Form>
         <Modal.Body>
-          <Form.Group controlId="formBasicEmail">
-            <Form.Label>標題</Form.Label>
+          <Form.Group>
+            <div className="form__datatype">
+              <Form.Label>標題</Form.Label>
+              <Form.Text className="form__empty">
+                {isEmpty.title && '標題不能為空'}
+              </Form.Text>
+            </div>
             <Form.Control
               name="title"
               type="text"
@@ -52,8 +84,13 @@ const EditingWindow = ({ onHide, show, post, status, handleChangePosts }) => {
               onChange={changePost}
             />
           </Form.Group>
-          <Form.Group controlId="formBasicPassword">
-            <Form.Label>作者</Form.Label>
+          <Form.Group>
+            <div className="form__datatype">
+              <Form.Label>作者</Form.Label>
+              <Form.Text className="form__empty">
+                {isEmpty.author && '作者不能為空'}
+              </Form.Text>
+            </div>
             <Form.Control
               name="author"
               type="text"
@@ -62,8 +99,13 @@ const EditingWindow = ({ onHide, show, post, status, handleChangePosts }) => {
               onChange={changePost}
             />
           </Form.Group>
-          <Form.Group controlId="exampleForm.ControlTextarea1">
-            <Form.Label>內文</Form.Label>
+          <Form.Group>
+            <div className="form__datatype">
+              <Form.Label>內文</Form.Label>
+              <Form.Text className="form__empty">
+                {isEmpty.body && '內容不能為空'}
+              </Form.Text>
+            </div>
             <Form.Control
               name="body"
               as="textarea"
@@ -73,6 +115,9 @@ const EditingWindow = ({ onHide, show, post, status, handleChangePosts }) => {
               onChange={changePost}
             />
           </Form.Group>
+          <Form.Text className="form__empty form__empty--submit">
+            {submitType.status}
+          </Form.Text>
         </Modal.Body>
         <Modal.Footer>
           <Button
@@ -83,7 +128,8 @@ const EditingWindow = ({ onHide, show, post, status, handleChangePosts }) => {
           </Button>
           <Button
             variant="outline-primary"
-            onClick={handlePost}
+            onClick={handleSubmit}
+            disabled={!submitType.canSubmit}
           >
             {status === 'editing' ? '儲存文章' : '新增文章'}
           </Button>
@@ -98,17 +144,17 @@ const DeleteWindow = ({ onHide, show, post, status, handleChangePosts }) => {
   const [loadingState, setLoadingState] = useState('是的，我要刪除');
 
   useEffect(() => {
-    console.log('cdu')
+    const finalExecution = (success) => { // 根據成功與否改變按鈕的內容
+      success ? setLoadingState('刪除成功！') : setLoadingState('刪除失敗！')
+      setTimeout(() => {
+        success ? handleChangePosts(status, post) : setLoadingState('是的，我要刪除')
+      }, 1000)
+    } /** 放內部就不用使用 useCallback */
+
     if (loadingState === '刪除中........') {
       webAPI.deletePost(post.id) // 改變伺服器
-        .then(res => res.status < 300 && handleChangePosts(status, post) /* 改變父狀態 */)
-        .catch(() => setLoadingState('刪除失敗！'))
-      /** 後續改進：
-       * loading 畫面寫法，另外開一個狀態是表示送出中，
-       * 然後 cdu 的時候就偵測這個值有沒有改變，或是偵測有無按下確認刪除
-       * 有的話就發出 Ajax，然後 ajax 的 cb 就放變更成功失敗訊息的 component
-       * 並在幾秒後執行關閉彈出視窗 使用 setTimeout 在幾秒後呼叫 handleChangePosts，並另外打包
-       */
+        .then(res => res.status < 300 && finalExecution(true) /* 改變父狀態 */)
+        .catch(() => finalExecution(false))
     }
   }, [loadingState, handleChangePosts, post, status]); /* 待研究為什麼需要加入後三者才不報錯 */
 
