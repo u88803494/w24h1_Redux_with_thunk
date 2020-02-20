@@ -1,30 +1,56 @@
-import React, { useState } from 'react';
-import './editingWindow.css'; // 暫時無用之後確認無用就刪除
+import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
+import './editing_window.css';
+import * as webAPI from '../WebAPI';
 
-/** 除了新增編輯功能之外，還要有刪除確認功能
- * 預計統合在一起，可能的話連 component name 都要換掉
- */
+const EditingWindow = ({ onHide, show, post, status, handleChangePosts }) => {
+  const newPost = { title: '', author: '', body: '', };
+  const defaultEmpty = { title: false, author: false, body: false, };
+  const defaultSubmitType = { canSubmit: true, status: '', };
 
-const EditingWindow = ({ onHide, show, state, post }) => {
-  const [thisPost, setThisPost] = useState(post ? post : {})
+  const [thisPost, setThisPost] = useState(post ? post : newPost);
+  const [isEmpty, setEmpty] = useState(defaultEmpty); // 為了一開始不偵測
+  const [submitType, setSubmitType] = useState(defaultSubmitType);
+  // 一開始先不偵測，因為本身載入的都是有內容的。
 
-  const changeBody = (e, dataType) => {
-    const updatePost = Object.assign({}, thisPost); // 執行單層深拷貝
-    switch (dataType) {
-      case 'title':
-        updatePost.title = e.target.value;
-        break;
-      case 'author':
-        updatePost.author = e.target.value;
-        break;
-      case 'body':
-        updatePost.body = e.target.value;
-        break;
-      default:
+  const changePost = (e) => {
+    if (!e.target.value) { // 輸入時確認是否為空
+      setEmpty({ ...isEmpty, [e.target.name]: true, })
+    } else {
+      setEmpty({ ...isEmpty, [e.target.name]: false, })
     }
-    setThisPost(updatePost)
+
+    setThisPost({ ...thisPost, [e.target.name]: e.target.value, })
   }
+
+  const handleSubmit = () => {
+    if (!thisPost.title || !thisPost.author || !thisPost.body) {
+      setSubmitType({ canSubmit: false, status: '資料不全，無法送出，繼續完成資料才可送出', });
+      return;
+    }
+
+    const whichAPI = (thisPost, status) => status === 'create' ?
+      webAPI.createPost(thisPost) : webAPI.updatePost(thisPost)
+
+    const submitPost = (status, thisPost) => { // 像這個想詢問一下，可以往上獲取資料，我還需要特別傳入嗎？
+      handleChangePosts(status, thisPost); // 改變畫面上的資料
+      onHide(); /** 進一步可優化顯示傳送中，成功後顯示成功 */
+    }
+
+    const onError = (err) => {
+      setSubmitType({ canSubmit: false, status: `發生問題無法送出 ${err}`, });
+    }
+
+    whichAPI(thisPost, status)
+      .then(res => res.status <= 300 && submitPost(status, thisPost))
+      .catch(err => onError(err)) // .then .catch 是否會自己判斷 status?
+  }
+
+  useEffect(() => {
+    if (thisPost.title && thisPost.author && thisPost.body) {
+      setSubmitType({ canSubmit: true, status: '', });
+    } // render 檢測值是否為空
+  }, [thisPost])
 
   return (
     <Modal
@@ -32,49 +58,81 @@ const EditingWindow = ({ onHide, show, state, post }) => {
       aria-labelledby="contained-modal-title-vcenter"
       centered
       {...{ onHide, show }
-    /* 不太懂為什麼一定要加 ... 直接寫也會出 bug 只知道等同於下面
+      /* 不太懂為什麼一定要加 ... 直接寫也會出 bug 只知道等同於下面
       onHide={onHide} show={show}，這樣的寫法是另外變成物件，然後傳給子 component 之後解構嗎
-    */}
+      */}
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          {state === "editing" ? "你正在編輯文章" : "你正在新增文章"}
+          {status === "editing" ? "你正在編輯文章" : "你正在新增文章"}
         </Modal.Title>
       </Modal.Header>
       <Form>
         <Modal.Body>
-          <Form.Group controlId="formBasicEmail">
-            <Form.Label>標題</Form.Label>
+          <Form.Group>
+            <div className="form__datatype">
+              <Form.Label>標題</Form.Label>
+              <Form.Text className="form__empty">
+                {isEmpty.title && '標題不能為空'}
+              </Form.Text>
+            </div>
             <Form.Control
+              name="title"
               type="text"
               placeholder="Enter title"
               value={thisPost && thisPost.title}
-              onChange={(e) => { changeBody(e, 'title') }} // 似乎可以抽出來，就是用變數名稱取代
+              onChange={changePost}
             />
           </Form.Group>
-          <Form.Group controlId="formBasicPassword">
-            <Form.Label>作者</Form.Label>
+          <Form.Group>
+            <div className="form__datatype">
+              <Form.Label>作者</Form.Label>
+              <Form.Text className="form__empty">
+                {isEmpty.author && '作者不能為空'}
+              </Form.Text>
+            </div>
             <Form.Control
+              name="author"
               type="text"
               placeholder="author/作者"
               value={thisPost && thisPost.author}
-              onChange={(e) => { changeBody(e, 'author') }}
+              onChange={changePost}
             />
           </Form.Group>
-          <Form.Group controlId="exampleForm.ControlTextarea1">
-            <Form.Label>內文</Form.Label>
+          <Form.Group>
+            <div className="form__datatype">
+              <Form.Label>內文</Form.Label>
+              <Form.Text className="form__empty">
+                {isEmpty.body && '內容不能為空'}
+              </Form.Text>
+            </div>
             <Form.Control
+              name="body"
               as="textarea"
               rows="5"
               placeholder="輸入內文"
               value={thisPost && thisPost.body}
-              onChange={(e) => { changeBody(e, 'body') }}
+              onChange={changePost}
             />
           </Form.Group>
+          <Form.Text className="form__empty form__empty--submit">
+            {submitType.status}
+          </Form.Text>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="outline-secondary" onClick={onHide}>Close</Button>
-          <Button variant="outline-primary" onClick={() => console.log('送出')} > Save changes</Button>
+          <Button
+            variant="outline-secondary"
+            onClick={onHide}
+          >
+            Close
+          </Button>
+          <Button
+            variant="outline-primary"
+            onClick={handleSubmit}
+            disabled={!submitType.canSubmit}
+          >
+            {status === 'editing' ? '儲存文章' : '新增文章'}
+          </Button>
         </Modal.Footer>
       </Form>
     </Modal>
@@ -82,8 +140,28 @@ const EditingWindow = ({ onHide, show, state, post }) => {
   );
 }
 
+const DeleteWindow = ({ onHide, show, post, status, handleChangePosts }) => {
+  const [loadingState, setLoadingState] = useState('是的，我要刪除');
 
-const DeleteWindow = ({ onHide, show, state, post }) => {
+  useEffect(() => {
+    const finalExecution = (success) => { // 根據成功與否改變按鈕的內容
+      success ? setLoadingState('刪除成功！') : setLoadingState('刪除失敗！')
+      setTimeout(() => {
+        success ? handleChangePosts(status, post) : setLoadingState('是的，我要刪除')
+      }, 1000)
+    } /** 放內部就不用使用 useCallback */
+
+    if (loadingState === '刪除中........') {
+      webAPI.deletePost(post.id) // 改變伺服器
+        .then(res => res.status < 300 && finalExecution(true) /* 改變父狀態 */)
+        .catch(() => finalExecution(false))
+    }
+  }, [loadingState, handleChangePosts, post, status]); /* 待研究為什麼需要加入後三者才不報錯 */
+
+  const handleDelete = () => {
+    setLoadingState('刪除中........')
+  }
+
   return (
     <Modal
       size="lg"
@@ -98,102 +176,22 @@ const DeleteWindow = ({ onHide, show, state, post }) => {
       </Modal.Header>
       <Modal.Body>
         你確定要刪除文章嗎？
-        </Modal.Body>
+      </Modal.Body>
       <Modal.Footer>
-        <Button variant="outline-secondary" onClick={onHide}>不了，我不要刪除</Button>
-        <Button variant="outline-primary" onClick={() => console.log(`已刪：${post.id}`)} > 是的，我要刪除 </Button>
+        <Button variant="outline-secondary" onClick={onHide}>
+          不了，我不要刪除
+        </Button>
+        <Button
+          variant="outline-danger"
+          onClick={handleDelete}
+          disabled={loadingState !== '是的，我要刪除'}
+        >
+          {loadingState}
+        </Button>
       </Modal.Footer>
     </Modal>
+
   );
 }
-/*
-class EditingWindow extends React.Component {
-  constructor(props) {
-    const backgroundHieght = document.body.scrollHeight;
-    const windowHeight = document.body.clientWidth;
-    // constructor 取代 componentWillMount
-    super(props);
-    this.state = {
-      height: backgroundHieght > windowHeight ? backgroundHieght : windowHeight,
-    };
-  }
-
-  componentWillMount() {
-    /*const backgroundHieght = document.body.clientHeight;
-    console.log(backgroundHieght);
-    this.setState({ height: backgroundHieght });
-    // console.log('willMount');*
-  }
-
-  componentWillUnmount() {
-    /** 考慮在這裡送出更新資料的指令，
-     * 但需要確認是是不是回傳 true 才繼續，
-     * 如果 flase 就可以停止摧毀
-     * 或是另外找尋方式，
-     * 又或是直接使用 redux 的 action 的方式發送？
-     * 總之就是需要看看有沒有辦法確認成功與否
-     * 但仔細想想，這次的 api 沒這功能 */
-/*  console.log('WillUnmonut'); *
-}
-
-render() {
- const { height } = this.state;
- const { handleEditing, handlePublish, isEditing } = this.props;
- const isHereEditing = handleEditing !== undefined; // 判斷當前視窗是否是編輯
- const style = {
-   height: height + 100,
- };
-
- return (
-   <>
-     <div id="cover" style={style}>
-     </div>
-     <div className="editing">
-       <div className="editing__tips">
-         {isHereEditing ? "你正在編輯文章" : "你這在新增文章"}
-       </div>
-       <div className="editing__title">
-         標題視窗
-         </div>
-       <div className="editing__author">
-         作者
-         </div>
-
-       <div className="editing__content">
-         {`輸入內容
-         js彈窗 js彈出DIV,並使整個頁面背景變暗`}
-       </div>
-       <button className="editing__btn"
-         onClick={isHereEditing ? handleEditing : handlePublish}>
-         {isHereEditing ? "關閉編輯" : "關閉新增文章"}
-       </button>
-       <Modal.Dialog isEditing={isEditing} onHide={isHereEditing}>
-         <Modal.Header
-           closeButton
-           onClick={isHereEditing ? handleEditing : handlePublish}
-         >
-           <Modal.Title>Modal title</Modal.Title>
-         </Modal.Header>
-
-         <Modal.Body>
-           <p>Modal body text goes here.</p>
-         </Modal.Body>
-
-         <Modal.Footer>
-           <Button
-             variant="secondary"
-             onClick={isHereEditing ? handleEditing : handlePublish}
-           >
-             Close
-           </Button>
-           <Button variant="primary">Save changes</Button>
-         </Modal.Footer>
-       </Modal.Dialog>
-     </div>
-   </>
- );
-}
-}
-**/
 
 export { EditingWindow, DeleteWindow };

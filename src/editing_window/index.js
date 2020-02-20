@@ -1,1 +1,1 @@
-export {EditingWindow, DeleteWindow} from './EditingWindow';
+export { EditingWindow, DeleteWindow } from './EditingWindow';
