@@ -10,5 +10,4 @@
 .form__empty--submit {
   display: flex;
   justify-content: flex-end;
-  line-height: 15px;
 }

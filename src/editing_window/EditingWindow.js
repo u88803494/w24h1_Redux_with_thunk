@@ -5,7 +5,7 @@ import * as webAPI from '../WebAPI';
 
 const EditingWindow = ({ onHide, show, post, status, handleChangePosts }) => {
   const newPost = { title: '', author: '', body: '', };
-  const defaultEmpty = { title: false, author: false, body: false, }; 
+  const defaultEmpty = { title: false, author: false, body: false, };
   const defaultSubmitType = { canSubmit: true, status: '', };
 
   const [thisPost, setThisPost] = useState(post ? post : newPost);
@@ -32,7 +32,7 @@ const EditingWindow = ({ onHide, show, post, status, handleChangePosts }) => {
     const whichAPI = (thisPost, status) => status === 'create' ?
       webAPI.createPost(thisPost) : webAPI.updatePost(thisPost)
 
-    const changePost = (status, thisPost) => { // 像這個想詢問一下，可以往上獲取資料，我還需要特別傳入嗎？
+    const submitPost = (status, thisPost) => { // 像這個想詢問一下，可以往上獲取資料，我還需要特別傳入嗎？
       handleChangePosts(status, thisPost); // 改變畫面上的資料
       onHide(); /** 進一步可優化顯示傳送中，成功後顯示成功 */
     }
@@ -41,15 +41,15 @@ const EditingWindow = ({ onHide, show, post, status, handleChangePosts }) => {
       setSubmitType({ canSubmit: false, status: `發生問題無法送出 ${err}`, });
     }
 
-    whichAPI(thisPost, status) // 多個括號共用 .then
-      .then(res => res.status <= 300 && changePost(status, thisPost))
+    whichAPI(thisPost, status)
+      .then(res => res.status <= 300 && submitPost(status, thisPost))
       .catch(err => onError(err)) // .then .catch 是否會自己判斷 status?
   }
 
   useEffect(() => {
     if (thisPost.title && thisPost.author && thisPost.body) {
       setSubmitType({ canSubmit: true, status: '', });
-    } // render 前檢測值是否為空
+    } // render 檢測值是否為空
   }, [thisPost])
 
   return (
@@ -180,14 +180,14 @@ const DeleteWindow = ({ onHide, show, post, status, handleChangePosts }) => {
       <Modal.Footer>
         <Button variant="outline-secondary" onClick={onHide}>
           不了，我不要刪除
-  </Button>
-<Button
-  variant="outline-danger"
-  onClick={handleDelete}
-  disabled={loadingState !== '是的，我要刪除'}
->
-  {loadingState}
-</Button>
+        </Button>
+        <Button
+          variant="outline-danger"
+          onClick={handleDelete}
+          disabled={loadingState !== '是的，我要刪除'}
+        >
+          {loadingState}
+        </Button>
       </Modal.Footer>
     </Modal>
 
