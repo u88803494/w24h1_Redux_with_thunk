@@ -180,14 +180,14 @@ const DeleteWindow = ({ onHide, show, post, status, handleChangePosts }) => {
       <Modal.Footer>
         <Button variant="outline-secondary" onClick={onHide}>
           不了，我不要刪除
-          </Button>
-        <Button
-          variant="outline-danger"
-          onClick={handleDelete}
-          disabled={loadingState !== '是的，我要刪除'}
-        >
-          {loadingState}
-        </Button>
+  </Button>
+<Button
+  variant="outline-danger"
+  onClick={handleDelete}
+  disabled={loadingState !== '是的，我要刪除'}
+>
+  {loadingState}
+</Button>
       </Modal.Footer>
     </Modal>
 
