@@ -1,12 +1,12 @@
 import React from 'react';
 import './App.css';
 import { HashRouter as Router, Route } from "react-router-dom";
-import Nav from './nav/';
-import Home from './home/';
-import PostList from './post_list/';
-import Posts from './posts/';
-import About from './about/';
-import Footer from './footer/';
+import Nav from './component/nav/';
+import Home from './component/home/';
+import PostList from './component/post_list/';
+import Posts from './component/posts/';
+import About from './component/about/';
+import Footer from './component/footer/';
 
 class App extends React.Component {
   render() {

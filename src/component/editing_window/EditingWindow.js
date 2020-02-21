@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
 import './editing_window.css';
-import * as webAPI from '../WebAPI';
+import * as webAPI from '../../WebAPI';
 
 const EditingWindow = ({ onHide, show, post, status, handleChangePosts }) => {
   const newPost = { title: '', author: '', body: '', };
