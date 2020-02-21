@@ -11,17 +11,16 @@ import Footer from './component/footer/';
 class App extends React.Component {
   render() {
     return (
-      <div className="App">
-        <Nav />
-        {/* <Route exact path="/" component={Home} />
+      <Router>
+        <div className="App">
+          <Nav />
+          <Route exact path="/" component={Home} />
           <Route exact path="/posts" component={PostList} />
           <Route path="/about" component={About} />
-          <Route path="/posts/:postId" component={Posts} /> */}
-        <Home>首頁</Home>
-        <PostList>文章列表</PostList>
-        <About>關於我</About>
-        <Footer />
-      </div>
+          <Route path="/posts/:postId" component={Posts} />
+          <Footer />
+        </div>
+      </Router>
     );
   }
 }

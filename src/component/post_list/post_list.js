@@ -1,5 +1,5 @@
 import React, { Component, useState } from 'react';
-// import { withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { ListGroup, Button, Spinner } from 'react-bootstrap';
 import './post_list.css';
 import { EditingWindow, DeleteWindow } from '../editing_window/';
@@ -166,5 +166,4 @@ class Posts extends Component {
   }
 }
 
-export default Posts;
-/* export default withRouter(Posts); */
+export default withRouter(Posts);
