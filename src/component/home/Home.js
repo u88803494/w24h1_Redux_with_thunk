@@ -4,11 +4,9 @@ import { Button, Figure, Card, CardGroup } from 'react-bootstrap';
 
 
 const SeeMoreButton = ({ className, text, variant }) => (
-  <a rel="noopener noreferrer" href="#/posts" className={className} >
-    <Button variant={variant} >
-      {text}
-    </Button>
-  </a>
+  <Button variant={variant} href="#/posts" className={className} >
+    {text}
+  </Button>
 )
 
 const Advantages = ({ avaData }) => (

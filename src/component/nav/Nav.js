@@ -1,6 +1,19 @@
 import React from 'react';
 import { Nav, Navbar } from 'react-bootstrap';
+import { Link, Route } from "react-router-dom";
 import './nav.css';
+
+const Item = ({ to, text, exact }) => (
+  <Route
+    path={to}
+    exact={exact}
+    children={({ match }) => (
+      <Link to={to} className={`nav-link ${match ? "active" : ""}`}>
+        {text}
+      </Link>
+    )}
+  />
+)
 
 class TheNavbar extends React.Component {
   constructor(props) {
@@ -66,13 +79,13 @@ class TheNavbar extends React.Component {
         fixed="top"
         className={isHidden && "navbar--hide"}
       >
-        <Navbar.Brand href="/#">React-Bootstrap</Navbar.Brand>
+        <Navbar.Brand href="/#">React-Blog</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="mr-auto">
-            <Nav.Link href="/#">首頁</Nav.Link>
-            <Nav.Link href="/#posts">文章列表</Nav.Link>
-            <Nav.Link href="/#about">關於我</Nav.Link>
+            <Item to='/' exact={true} text='首頁' />
+            <Item to='/posts' text='文章列表' />
+            <Item to='/about' text='關於本站' />
           </Nav>
         </Navbar.Collapse>
       </Navbar>
