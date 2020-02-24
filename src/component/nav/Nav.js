@@ -1,6 +1,6 @@
 import React from 'react';
-import { Nav, Navbar } from 'react-bootstrap';
 import { Link, Route } from "react-router-dom";
+import { Nav, Navbar } from 'react-bootstrap';
 import './nav.css';
 
 const Item = ({ to, text, exact }) => (

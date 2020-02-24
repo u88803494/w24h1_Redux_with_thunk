@@ -1,9 +1,9 @@
 import React, { Component, useState } from 'react';
 import { withRouter } from 'react-router-dom';
-import { ListGroup, Button, Spinner } from 'react-bootstrap';
-import './post_list.css';
 import { EditingWindow, DeleteWindow } from '../editing_window/';
 import { getPosts } from '../../WebAPI';
+import { ListGroup, Button, Spinner } from 'react-bootstrap';
+import './post_list.css';
 
 const ControllerButton = ({ post, handleChangePosts }) => {
   const [editingShow, setEditingShow] = useState(false);

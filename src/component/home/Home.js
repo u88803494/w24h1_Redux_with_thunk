@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import './home.css';
 import { Button, Figure, Card, CardGroup } from 'react-bootstrap';
+import './home.css';
 
 
 const SeeMoreButton = ({ className, text, variant }) => (

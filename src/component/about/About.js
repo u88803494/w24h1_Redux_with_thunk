@@ -1,6 +1,6 @@
 import React from 'react';
-import './about.css';
 import { Jumbotron } from 'react-bootstrap';
+import './about.css';
 
 function About() {
   return (

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { getPost } from '../../WebAPI';
 import { Button, Spinner } from 'react-bootstrap';
 import './post.css';
 
@@ -39,7 +39,7 @@ class Post extends Component {
 
   componentDidMount() {
     const { postId } = this.props.match.params;
-    axios.get('https://qootest.com/posts/' + postId)
+    getPost(postId)
       .then(res => {
         this.setState({
           post: res.data,
