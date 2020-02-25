@@ -1,12 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Nav from '../component/nav/';
+import TheNavbar from '../component/nav/';
 
 const NavContainer = (props) => {
-  return <Nav {...props} />
+  console.log(props)
+  return <TheNavbar {...props} />
 }
 
 const mapStateToProps = state => {
+  console.log(state)
   return {
     navText: state.nav.navText
   }

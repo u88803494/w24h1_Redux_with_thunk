@@ -5,10 +5,11 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { Provider } from 'react-redux';
 import { createStore, combineReducers } from 'redux';
-import navReducer from './reducer';
+import { navReducer, postsReducer } from './reducer';
 
 const reducers = combineReducers({
   nav: navReducer,
+  posts: postsReducer,
 });
 
 const store = createStore(reducers);

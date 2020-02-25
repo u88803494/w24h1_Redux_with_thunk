@@ -1,9 +1,9 @@
 import React from 'react';
 import './App.css';
 import { HashRouter as Router, Route } from "react-router-dom";
-import Nav from './component/nav/';
+import Nav from './containers/NavContainer';
 import Home from './containers/HomeContainer';
-import PostList from './component/post_list/';
+import PostList from './containers/PostsListContainer';
 import Posts from './component/posts/';
 import About from './component/about/';
 import Footer from './component/footer/';

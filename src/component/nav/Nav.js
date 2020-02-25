@@ -70,6 +70,7 @@ class TheNavbar extends React.Component {
 
   render() {
     const { isHidden } = this.state;
+    const { navText } = this.props;
     return (
       <Navbar
         collapseOnSelect
@@ -86,6 +87,7 @@ class TheNavbar extends React.Component {
             <Item to='/' exact={true} text='首頁' />
             <Item to='/posts' text='文章列表' />
             <Item to='/about' text='關於本站' />
+            <div style={{color: 'red'}}>{navText}</div>
           </Nav>
         </Navbar.Collapse>
       </Navbar>

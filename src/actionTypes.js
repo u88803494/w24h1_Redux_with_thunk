@@ -1,2 +1,3 @@
 export const UPDATE_NAV_TEXT = "UPDATE_NAV_TEXT";
 export const UPDATE_TEST = "UPDATE_TEST";
+export const UPDATE_POSTS_LIST = "UPDATE_POSTS_LIST";

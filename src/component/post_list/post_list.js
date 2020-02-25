@@ -110,6 +110,7 @@ class Posts extends Component {
         break;
       default:
         console.log('一定是搞錯了什麼');
+      // 改成做完資歷之後，把資歷料回傳給 store
     }
   }
 

@@ -1,11 +1,14 @@
-import { UPDATE_NAV_TEXT, UPDATE_TEST } from './actionTypes';
+import { UPDATE_NAV_TEXT, UPDATE_TEST, UPDATE_POSTS_LIST } from './actionTypes';
 
-const state = {
-  navText: 'home',
+const navState = {
+  navText: 1,
 }
 
-// [].reduce()
-function reducer(globalState = state, action) {
+const postsState = {
+  postsListDate: []
+}
+
+function navReducer(globalState = navState, action) {
   switch (action.type) {
     case UPDATE_NAV_TEXT:
       return {
@@ -17,9 +20,27 @@ function reducer(globalState = state, action) {
         ...globalState,
         test: action.value,
       };
+    case UPDATE_POSTS_LIST:
+      return {
+        ...globalState,
+        postsListData: action.value,
+      }
     default:
       return globalState;
   }
 }
 
-export default reducer;
+const postsReducer = (globalState = postsState, action) => {
+  switch (action.type) {
+    case UPDATE_POSTS_LIST:
+      return {
+        ...globalState,
+        postsListData: action.value,
+      }
+    default:
+      return globalState;
+  }
+}
+
+/* export default navReducer; */
+export { navReducer, postsReducer }
