@@ -1,25 +1,23 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Posts from '../component/post_list/';
-import { updateNavText } from '../actions';
+import { updatePosts } from '../actions';
 
 const PostsContainer = (props) => {
-  console.log(props)
   return <Posts {...props} />
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = state => { // return 時，告訴需要什麼資料
   console.log(state)
   return {
-    data: state.posts.postsListData,
+    postsListData: state.posts.postsListData,
   }
 }
 
-const mapDispatchToPtops = dispatch => {
-  console.log(dispatch)
+const mapDispatchToProps = dispatch => {
   return {
-    updateNav: data => dispatch(updateNavText(data)),
+    updatePosts: data => dispatch(updatePosts(data)),
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToPtops)(PostsContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(PostsContainer);

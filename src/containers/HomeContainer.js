@@ -7,10 +7,10 @@ const HomeContainer = (props) => {
   return <Home {...props} />
 }
 
-const mapDispatchToPtops = dispatch => {
+const mapDispatchToProps = dispatch => {
   return {
     updateNav: text => dispatch(updateNavText(text)),
   }
 }
 
-export default connect(null, mapDispatchToPtops)(HomeContainer);
+export default connect(null, mapDispatchToProps)(HomeContainer);

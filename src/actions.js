@@ -5,7 +5,7 @@ export const updateNavText = (text) => ({
 	value: text,
 });
 
-export const updatePostsList = (data) => ({
+export const updatePosts = (posts) => ({
 	type: UPDATE_POSTS_LIST,
-	data,
+	posts,
 })

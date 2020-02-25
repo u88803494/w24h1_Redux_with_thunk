@@ -71,6 +71,7 @@ class TheNavbar extends React.Component {
   render() {
     const { isHidden } = this.state;
     const { navText } = this.props;
+
     return (
       <Navbar
         collapseOnSelect

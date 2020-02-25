@@ -5,7 +5,7 @@ const navState = {
 }
 
 const postsState = {
-  postsListDate: []
+  postsListData: []
 }
 
 function navReducer(globalState = navState, action) {
@@ -20,11 +20,6 @@ function navReducer(globalState = navState, action) {
         ...globalState,
         test: action.value,
       };
-    case UPDATE_POSTS_LIST:
-      return {
-        ...globalState,
-        postsListData: action.value,
-      }
     default:
       return globalState;
   }
@@ -34,8 +29,7 @@ const postsReducer = (globalState = postsState, action) => {
   switch (action.type) {
     case UPDATE_POSTS_LIST:
       return {
-        ...globalState,
-        postsListData: action.value,
+        postsListData: action.posts,
       }
     default:
       return globalState;

@@ -126,9 +126,24 @@ class Posts extends Component {
       });
   }
 
+  componentDidUpdate(__prevProps, prevState) {
+    if (prevState !== this.state) {
+      this.props.updatePosts(this.state.data);
+      /** 
+       * 之後改仰賴 store 的話，流程應該是 CDM 取得資料之後傳給 store，store 藉由 CDU 把資料拉下來。
+       * 然後編輯的部分就可以取用 store 的資料了，接下來只要傳 ID 下去讓他們去 store 抓取資料。
+       * 然後彈出編輯視窗，也變成利用 redux，來確認是否開啟就好。就可以從一直重複寫解放出來了。
+       * 放的位置也變多了。
+       * 單一文章頁面也可以改成從 store 取得，但這部分有待思考。
+      */
+    }
+  }
+
+
   render() { /** 之後可以改成兩種呈現方式，條列式格狀顯示 */
     const { data, isCreate } = this.state;
     const { history } = this.props;
+
     return (
       <div className="blog">
         <header className="header">
