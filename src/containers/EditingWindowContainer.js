@@ -3,9 +3,7 @@ import { connect } from 'react-redux';
 import { EditingWindow } from '../component/editing_window';
 import { changePosts } from '../actions';
 
-const EditingWindowContainer = (props) => {
-  return <EditingWindow {...props} />
-}
+const EditingWindowContainer = (props) => <EditingWindow {...props} />;
 
 const mapStateToProps = state => { // return 時，告訴需要什麼資料
   return {

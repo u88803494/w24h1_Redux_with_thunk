@@ -3,9 +3,7 @@ import { connect } from 'react-redux';
 import Home from '../component/home';
 import { updateNavText } from '../actions';
 
-const HomeContainer = (props) => {
-  return <Home {...props} />
-}
+const HomeContainer = (props) => <Home {...props} />;
 
 const mapDispatchToProps = dispatch => {
   return {

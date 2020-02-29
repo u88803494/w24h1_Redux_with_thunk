@@ -3,15 +3,7 @@ import { connect } from 'react-redux';
 import { DeleteWindow } from '../component/editing_window';
 import { changePosts } from '../actions';
 
-const DeleteWindowContainer = (props) => {
-  return <DeleteWindow {...props} />
-}
-
-const mapStateToProps = state => { // 這裡應該不需要
-  return {
-    posts: state.posts.postsListData,
-  }
-}
+const DeleteWindowContainer = (props) => <DeleteWindow {...props} />;
 
 const mapDispatchToProps = dispatch => {
   return {
@@ -19,4 +11,4 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(DeleteWindowContainer);
+export default connect(null, mapDispatchToProps)(DeleteWindowContainer);

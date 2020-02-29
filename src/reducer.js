@@ -1,4 +1,10 @@
-import { UPDATE_NAV_TEXT, UPDATE_TEST, UPDATE_POSTS_LIST, CHANGE_POSTS } from './actionTypes';
+import {
+  UPDATE_NAV_TEXT,
+  UPDATE_TEST,
+  UPDATE_POSTS_LIST,
+  CHANGE_POSTS,
+  SHOW_ARTICLE_MANAGEMENT_WINDOWS
+} from './actionTypes';
 
 const navState = {
   navText: 1,
@@ -72,5 +78,28 @@ const postsReducer = (globalState = postsState, action) => {
   }
 }
 
+const windowState = {
+  isShow: false,
+  state: '', // 考慮之後改成 method
+  postId: null,
+  show: false, // 是否顯現的值
+  onHide: () => {console.log('function')} // 關閉視窗的 function
+} // 之後記得整理在一起
+/** 上方的資料可能要分開寫或寫一起都可以，這點是要思考的，
+ * 因為彈出視窗需要用到這些值，所以暫時先把所有要用到的資料都放上
+ * 方便之後實作中思考 */
+
+const wnidowReducer = (globalState = windowState, action) => {
+  switch (action.type) {
+    case SHOW_ARTICLE_MANAGEMENT_WINDOWS:
+      return {
+        ...globalState,
+        navText: action.value,
+      };
+    default:
+      return globalState;
+  }
+}
+
 /* export default navReducer; */
-export { navReducer, postsReducer };
+export { navReducer, postsReducer, wnidowReducer };

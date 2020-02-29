@@ -15,7 +15,7 @@ const ControllerButton = ({ postId }) => {
 
   return (
     <div className="blog__controller">
-      <Button variant="outline-success" onClick={handleEdit} >編輯</Button>
+      <Button variant="outline-success" onClick={handleEdit}>編輯</Button>
       {
         editingShow &&
         <EditingWindow /** 編輯視窗 */

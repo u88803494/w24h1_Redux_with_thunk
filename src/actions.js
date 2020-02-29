@@ -17,7 +17,7 @@ export const updatePosts = (posts) => ({
 
 export const changePosts = (post) => ({
 	type: CHANGE_POSTS,
-	post
+	post,
 })
 
 export const showUpdateWindows = (postStatus) => ({
