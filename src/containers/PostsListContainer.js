@@ -8,7 +8,6 @@ const PostsContainer = (props) => {
 }
 
 const mapStateToProps = state => { // return 時，告訴需要什麼資料
-  console.log(state)
   return {
     postsListData: state.posts.postsListData,
   }

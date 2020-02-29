@@ -1,11 +1,12 @@
 import React, { Component, useState } from 'react';
 import { withRouter } from 'react-router-dom';
-import { EditingWindow, DeleteWindow } from '../editing_window/';
+import DeleteWindow from '../../containers/DeleteWindowContainer';
+import EditingWindow from '../../containers/EditingWindowContainer';
 import { getPosts } from '../../WebAPI';
 import { ListGroup, Button, Spinner } from 'react-bootstrap';
 import './post_list.css';
 
-const ControllerButton = ({ post, handleChangePosts }) => {
+const ControllerButton = ({ postId, handleChangePosts }) => {
   const [editingShow, setEditingShow] = useState(false);
   const [deleteShow, setDeleteShow] = useState(false);
 
@@ -21,7 +22,7 @@ const ControllerButton = ({ post, handleChangePosts }) => {
           show={editingShow}
           onHide={() => setEditingShow(false)}
           status="editing"
-          post={post}
+          postId={postId}
           handleChangePosts={handleChangePosts}
         />
       }
@@ -33,7 +34,7 @@ const ControllerButton = ({ post, handleChangePosts }) => {
           show={deleteShow}
           onHide={() => setDeleteShow(false)}
           status="delete"
-          post={post}
+          postId={postId}
           handleChangePosts={handleChangePosts}
         />
       }
@@ -55,7 +56,7 @@ const RenderPosts = ({ data, history, handleChangePosts }) => (
           >
             {post.title}
           </div>
-          <ControllerButton handleChangePosts={handleChangePosts} post={post} />
+          <ControllerButton handleChangePosts={handleChangePosts} postId={post.id} />
         </ListGroup.Item>
       ))
     }
@@ -66,83 +67,64 @@ class Posts extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [],
-      isCreate: false,
+      isCreate: false, // 之後改成 redux 增加可用範圍
     }
-    this.id = 1;
   }
 
   handleCreate = (isCreate) => {
     this.setState({ isCreate, })
   }
 
-  handleChangePosts = (method, changeData) => {
-    /** 第一個變數是方式，第二個變更的資料 */
-    const { data } = this.state;
-    switch (method) {
-      case 'create':
-        this.setState({
-          data: [{
-            ...changeData,
-            createdAt: new Date().getTime(), // 取得當前的 timestamp，雖然應該會跟伺服器上的不同
-            id: this.id,
-          },
-          ...data, // 放後面才能符合逆排序
-          ],
-        })
-        this.id += 1;
-        break;
-      case 'editing':
-        this.setState({
-          data: data.map((post) => {
-            if (post.id !== changeData.id) return post;
-            return {
-              ...post,
-              ...changeData,
-            };
-          })
-        });
-        break;
-      case 'delete':
-        this.setState({
-          data: data.filter(post => post.id !== changeData.id)
-        })
-        break;
-      default:
-        console.log('一定是搞錯了什麼');
-      // 改成做完資歷之後，把資歷料回傳給 store
-    }
-  }
+  // handleChangePosts = (method, changeData) => {
+  //   /** 第一個變數是方式，第二個變更的資料 */
+  //   const { data } = this.state;
+  //   switch (method) {
+  //     case 'create':
+  //       this.setState({
+  //         data: [{
+  //           ...changeData,
+  //           createdAt: new Date().getTime(), // 取得當前的 timestamp，雖然應該會跟伺服器上的不同
+  //           id: this.id,
+  //         },
+  //         ...data, // 放後面才能符合逆排序
+  //         ],
+  //       })
+  //       this.id += 1;
+  //       break;
+  //     case 'editing':
+  //       this.setState({
+  //         data: data.map((post) => {
+  //           if (post.id !== changeData.id) return post;
+  //           return {
+  //             ...post,
+  //             ...changeData,
+  //           };
+  //         })
+  //       });
+  //       break;
+  //     case 'delete':
+  //       this.setState({
+  //         data: data.filter(post => post.id !== changeData.id)
+  //       })
+  //       break;
+  //     default:
+  //       console.log('一定是搞錯了什麼');
+  //     // 改成做完資歷之後，把資歷料回傳給 store
+  //   }
+  // }
 
   componentDidMount() {
     getPosts() // call api 也許可以改在 RenderPosts 那裡
       .then(res => {
-        this.setState({
-          data: res.data
-            .filter(({ title, author, body }) => title && author && body)
-            .sort((a, b) => b.id - a.id),
-        }); // 太多無用資料，決定先篩選之後逆排序
-        this.id = res.data.length !== 0 ? res.data[res.data.length - 1].id + 1 : 1;
-      });
+        const result = res.data // 篩選無用資料
+          .filter(({ title, author, body }) => title && author && body);
+        this.props.updatePosts(result); // 傳給 Redux
+      })
   }
-
-  componentDidUpdate(__prevProps, prevState) {
-    if (prevState !== this.state) {
-      this.props.updatePosts(this.state.data);
-      /** 
-       * 之後改仰賴 store 的話，流程應該是 CDM 取得資料之後傳給 store，store 藉由 CDU 把資料拉下來。
-       * 然後編輯的部分就可以取用 store 的資料了，接下來只要傳 ID 下去讓他們去 store 抓取資料。
-       * 然後彈出編輯視窗，也變成利用 redux，來確認是否開啟就好。就可以從一直重複寫解放出來了。
-       * 放的位置也變多了。
-       * 單一文章頁面也可以改成從 store 取得，但這部分有待思考。
-      */
-    }
-  }
-
 
   render() { /** 之後可以改成兩種呈現方式，條列式格狀顯示 */
-    const { data, isCreate } = this.state;
-    const { history } = this.props;
+    const { isCreate } = this.state;
+    const { history, postsListData } = this.props; // 從 Redux 抓資料了
 
     return (
       <div className="blog">
@@ -168,9 +150,9 @@ class Posts extends Component {
         </header>
         <main className="blog__posts">
           {/** 判斷是否讀取中 */
-            data.length ?
+            postsListData.length ?
               <RenderPosts
-                data={data}
+                data={postsListData}
                 history={history}
                 handleChangePosts={this.handleChangePosts}
               /> :

@@ -4,7 +4,7 @@ export const createPost = post =>
   axios.post('https://qootest.com/posts/', post)
 
 export const getPosts = () =>
-  axios.get('https://qootest.com/posts');
+  axios.get('https://qootest.com/posts?_sort=id&_order=desc'); // 逆排序改用伺服的
 
 export const getPost = postId =>
   axios.get('https://qootest.com/posts/' + postId);

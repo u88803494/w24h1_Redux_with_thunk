@@ -3,12 +3,13 @@ import * as webAPI from '../../WebAPI';
 import { Button, Modal, Form } from 'react-bootstrap';
 import './editing_window.css';
 
-const EditingWindow = ({ onHide, show, post, status, handleChangePosts }) => {
-  const newPost = { title: '', author: '', body: '', };
-  const defaultEmpty = { title: false, author: false, body: false, };
-  const defaultSubmitType = { canSubmit: true, status: '', };
+const EditingWindow = ({ onHide, show, postId, posts, status, changePosts }) => {
+  const newPost = { title: '', author: '', body: '' }; // 新增文章用的預設值
+  const editingPost = posts.find(post => post.id === postId); // 取得資料
+  const defaultEmpty = { title: false, author: false, body: false, }; // 偵測文章是否為空的預設狀態
+  const defaultSubmitType = { canSubmit: true, status: '', }; // 是否可以提交的預設狀態
 
-  const [thisPost, setThisPost] = useState(post ? post : newPost);
+  const [thisPost, setThisPost] = useState(postId ? editingPost : newPost);
   const [isEmpty, setEmpty] = useState(defaultEmpty); // 為了一開始不偵測
   const [submitType, setSubmitType] = useState(defaultSubmitType);
   // 一開始先不偵測，因為本身載入的都是有內容的。
@@ -29,11 +30,11 @@ const EditingWindow = ({ onHide, show, post, status, handleChangePosts }) => {
       return;
     }
 
-    const whichAPI = (thisPost, status) => status === 'create' ?
-      webAPI.createPost(thisPost) : webAPI.updatePost(thisPost)
+    const whichAPI = (thisPost, status) => (status === 'create' ?
+      webAPI.createPost(thisPost) : webAPI.updatePost(thisPost));
 
     const submitPost = (status, thisPost) => { // 像這個想詢問一下，可以往上獲取資料，我還需要特別傳入嗎？
-      handleChangePosts(status, thisPost); // 改變畫面上的資料
+      changePosts({ status, thisPost }); // 改變 redux 上的 store
       onHide(); /** 進一步可優化顯示傳送中，成功後顯示成功 */
     }
 
@@ -44,9 +45,12 @@ const EditingWindow = ({ onHide, show, post, status, handleChangePosts }) => {
     whichAPI(thisPost, status)
       .then(res => res.status <= 300 && submitPost(status, thisPost))
       .catch(err => onError(err)) // .then .catch 是否會自己判斷 status?
+    /** 可加上 google CAPTCHA 驗證
+     * 之前曾經用過，之後可以加上個驗證功能
+    */
   }
 
-  useEffect(() => {
+  useEffect(() => { // 相當於 componenDidUpdate
     if (thisPost.title && thisPost.author && thisPost.body) {
       setSubmitType({ canSubmit: true, status: '', });
     } // render 檢測值是否為空
@@ -140,23 +144,30 @@ const EditingWindow = ({ onHide, show, post, status, handleChangePosts }) => {
   );
 }
 
-const DeleteWindow = ({ onHide, show, post, status, handleChangePosts }) => {
+const DeleteWindow = ({ onHide, show, postId, status, changePosts }) => {
   const [loadingState, setLoadingState] = useState('是的，我要刪除');
 
   useEffect(() => {
+    const changePostsSucess = () => {
+      changePosts({ status, postId });
+      onHide();
+      /** 第一次退出後顯示會
+      Can't perform a React state update on an unmounted component.
+      但是找不到原因以及如何處理 */
+    }
     const finalExecution = (success) => { // 根據成功與否改變按鈕的內容
       success ? setLoadingState('刪除成功！') : setLoadingState('刪除失敗！')
-      setTimeout(() => {
-        success ? handleChangePosts(status, post) : setLoadingState('是的，我要刪除')
+      setTimeout(() => { // 失敗就顯示失敗，然後把按鈕還原
+        success ? changePostsSucess() : setLoadingState('是的，我要刪除')
       }, 1000)
     } /** 放內部就不用使用 useCallback */
 
     if (loadingState === '刪除中........') {
-      webAPI.deletePost(post.id) // 改變伺服器
+      webAPI.deletePost(postId) // 改變伺服器
         .then(res => res.status < 300 && finalExecution(true) /* 改變父狀態 */)
         .catch(() => finalExecution(false))
     }
-  }, [loadingState, handleChangePosts, post, status]); /* 待研究為什麼需要加入後三者才不報錯 */
+  }, [loadingState, changePosts, postId, status, onHide]); /* 待研究為什麼需要加入後三者才不報錯 */
 
   const handleDelete = () => {
     setLoadingState('刪除中........')
