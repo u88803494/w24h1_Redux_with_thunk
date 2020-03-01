@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Posts from '../component/post_list/';
+import App from '../App';
 import { updatePosts, showUpdateWindows } from '../actions';
 
-const PostsContainer = (props) => <Posts {...props} />;
+const AppContainer = (props) => <App {...props} />;
 
 const mapStateToProps = state => { // return 時，告訴需要什麼資料
   return {
@@ -18,4 +18,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(PostsContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(AppContainer);

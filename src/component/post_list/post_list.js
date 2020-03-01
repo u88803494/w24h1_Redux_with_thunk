@@ -73,6 +73,17 @@ class Posts extends Component {
     this.setState({ isCreate, })
   }
 
+  handleShowWindows = () => {
+    const { showWindows } = this.props;
+    const showData = {
+      isShow: true,
+      state: 'create', // 考慮之後改成 method
+      show: true, // 是否顯現的值
+      onHide: () => { console.log('onHide func.') } // 關閉視窗的 function // 似乎沒必要傳入，由 redux 管理即可
+    }
+    showWindows(showData)
+  }
+
   componentDidMount() {
     getPosts() // call api 也許可以改在 RenderPosts 那裡
       .then(res => {
@@ -84,7 +95,7 @@ class Posts extends Component {
 
   render() { /** 之後可以改成兩種呈現方式，條列式格狀顯示 */
     const { isCreate } = this.state;
-    const { history, postsListData } = this.props; // 從 Redux 抓資料了
+    const { history, postsListData, showWindows } = this.props; // 從 Redux 抓資料了
 
     return (
       <div className="blog">
@@ -96,6 +107,12 @@ class Posts extends Component {
               onClick={() => this.handleCreate(true)}
             >
               新增文章
+            </Button>
+            <Button
+              variant="outline-primary"
+              onClick={this.handleShowWindows}
+            >
+              redux 彈出測試
             </Button>
             {
               isCreate &&
