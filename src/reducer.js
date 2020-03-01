@@ -3,7 +3,8 @@ import {
   UPDATE_TEST,
   UPDATE_POSTS_LIST,
   CHANGE_POSTS,
-  SHOW_ARTICLE_MANAGEMENT_WINDOWS
+  SHOW_ARTICLE_MANAGEMENT_WINDOW,
+  HIDE_ARTICLE_MANAGEMENT_WINDOW,
 } from './actionTypes';
 
 const navState = {
@@ -79,24 +80,29 @@ const postsReducer = (globalState = postsState, action) => {
 }
 
 const windowState = {
-  isShow: false,
-  state: '', // 考慮之後改成 method
+  method: 'create',
+  show: true, // 是否顯現的值
   postId: null,
-  show: false, // 是否顯現的值
-  onHide: () => { console.log('onHide func.') } // 關閉視窗的 function
 } // 之後記得整理在一起
 /** 上方的資料可能要分開寫或寫一起都可以，這點是要思考的，
  * 因為彈出視窗需要用到這些值，所以暫時先把所有要用到的資料都放上
  * 方便之後實作中思考 */
 
 const wnidowReducer = (globalState = windowState, action) => {
-  console.log(action)
   switch (action.type) {
-    case SHOW_ARTICLE_MANAGEMENT_WINDOWS:
+    case SHOW_ARTICLE_MANAGEMENT_WINDOW:
       return {
         ...globalState,
-        navText: action.value,
+        ...action.postState, // 可能要用全覆蓋，不然感覺會錯誤
+        show: true,
       };
+    case HIDE_ARTICLE_MANAGEMENT_WINDOW:
+      return {
+        ...globalState,
+        ...action.postState,
+        show: false,
+        method: '',
+      }
     default:
       return globalState;
   }

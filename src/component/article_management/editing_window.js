@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import * as webAPI from '../../WebAPI';
 import { Button, Modal, Form } from 'react-bootstrap';
-import './editing_window.css';
 
-const EditingWindow = ({ onHide, show, postId, posts, status, changePosts }) => {
+const EditingWindow = ({ show, method, postId, posts, onHide, changePosts }) => {
+  /** show: 彈出視窗顯示與否，method: 文章送出要用的方法，postId、posts: 用來編輯的資料
+   * onHide: 關閉視窗用，changePosts: 上傳文章用 */
+  console.log(show, method, postId, posts);
   const newPost = { title: '', author: '', body: '' }; // 新增文章用的預設值
   const editingPost = posts.find(post => post.id === postId); // 取得資料
   const defaultEmpty = { title: false, author: false, body: false, }; // 偵測文章是否為空的預設狀態
@@ -35,6 +37,7 @@ const EditingWindow = ({ onHide, show, postId, posts, status, changePosts }) => 
 
     const submitPost = (status, thisPost) => { // 像這個想詢問一下，可以往上獲取資料，我還需要特別傳入嗎？
       changePosts({ status, thisPost }); // 改變 redux 上的 store
+      setThisPost(newPost); // 因為沒有 unmount，所以需要加上。之後搭配整體看能不能實現 unmount
       onHide(); /** 進一步可優化顯示傳送中，成功後顯示成功 */
     }
 
@@ -42,8 +45,8 @@ const EditingWindow = ({ onHide, show, postId, posts, status, changePosts }) => 
       setSubmitType({ canSubmit: false, status: `發生問題無法送出 ${err}`, });
     }
 
-    whichAPI(thisPost, status)
-      .then(res => res.status <= 300 && submitPost(status, thisPost))
+    whichAPI(thisPost, method)
+      .then(res => res.status <= 300 && submitPost(method, thisPost))
       .catch(err => onError(err)) // .then .catch 是否會自己判斷 status?
     /** 可加上 google CAPTCHA 驗證
      * 之前曾經用過，之後可以加上個驗證功能
@@ -54,6 +57,7 @@ const EditingWindow = ({ onHide, show, postId, posts, status, changePosts }) => 
     if (thisPost.title && thisPost.author && thisPost.body) {
       setSubmitType({ canSubmit: true, status: '', });
     } // render 檢測值是否為空
+    console.log('componenDidUpdate')
   }, [thisPost])
 
   return (
@@ -68,7 +72,7 @@ const EditingWindow = ({ onHide, show, postId, posts, status, changePosts }) => 
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          {status === "editing" ? "你正在編輯文章" : "你正在新增文章"}
+          {method === "editing" ? "你正在編輯文章" : "你正在新增文章"}
         </Modal.Title>
       </Modal.Header>
       <Form>
@@ -135,7 +139,7 @@ const EditingWindow = ({ onHide, show, postId, posts, status, changePosts }) => 
             onClick={handleSubmit}
             disabled={!submitType.canSubmit}
           >
-            {status === 'editing' ? '儲存文章' : '新增文章'}
+            {method === 'editing' ? '儲存文章' : '新增文章'}
           </Button>
         </Modal.Footer>
       </Form>
@@ -144,65 +148,4 @@ const EditingWindow = ({ onHide, show, postId, posts, status, changePosts }) => 
   );
 }
 
-const DeleteWindow = ({ onHide, show, postId, status, changePosts }) => {
-  const [loadingState, setLoadingState] = useState('是的，我要刪除');
-
-  useEffect(() => {
-    const changePostsSucess = () => {
-      changePosts({ status, postId });
-      onHide();
-      /** 第一次退出後顯示會
-      Can't perform a React state update on an unmounted component.
-      但是找不到原因以及如何處理 */
-    }
-    const finalExecution = (success) => { // 根據成功與否改變按鈕的內容
-      success ? setLoadingState('刪除成功！') : setLoadingState('刪除失敗！')
-      setTimeout(() => { // 失敗就顯示失敗，然後把按鈕還原
-        success ? changePostsSucess() : setLoadingState('是的，我要刪除')
-      }, 1000)
-    } /** 放內部就不用使用 useCallback */
-
-    if (loadingState === '刪除中........') {
-      webAPI.deletePost(postId) // 改變伺服器
-        .then(res => res.status < 300 && finalExecution(true) /* 改變父狀態 */)
-        .catch(() => finalExecution(false))
-    }
-  }, [loadingState, changePosts, postId, status, onHide]); /* 待研究為什麼需要加入後三者才不報錯 */
-
-  const handleDelete = () => {
-    setLoadingState('刪除中........')
-  }
-
-  return (
-    <Modal
-      size="lg"
-      aria-labelledby="contained-modal-title-vcenter"
-      centered
-      {...{ onHide, show }}
-    >
-      <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">
-          警告！你正在刪除文章
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        你確定要刪除文章嗎？
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="outline-secondary" onClick={onHide}>
-          不了，我不要刪除
-        </Button>
-        <Button
-          variant="outline-danger"
-          onClick={handleDelete}
-          disabled={loadingState !== '是的，我要刪除'}
-        >
-          {loadingState}
-        </Button>
-      </Modal.Footer>
-    </Modal>
-
-  );
-}
-
-export { EditingWindow, DeleteWindow };
+export default EditingWindow;

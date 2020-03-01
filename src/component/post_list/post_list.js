@@ -1,7 +1,7 @@
 import React, { Component, useState } from 'react';
 import { withRouter } from 'react-router-dom';
-import DeleteWindow from '../../containers/DeleteWindowContainer';
-import EditingWindow from '../../containers/EditingWindowContainer';
+// import DeleteWindow from '../../containers/DeleteWindowContainer';
+// import EditingWindow from '../../containers/EditingWindowContainer';
 import { getPosts } from '../../WebAPI';
 import { ListGroup, Button, Spinner } from 'react-bootstrap';
 import './post_list.css';
@@ -16,25 +16,25 @@ const ControllerButton = ({ postId }) => {
   return (
     <div className="blog__controller">
       <Button variant="outline-success" onClick={handleEdit}>編輯</Button>
-      {
+      {/* {
         editingShow &&
-        <EditingWindow /** 編輯視窗 */
+        <EditingWindow /** 編輯視窗 
           show={editingShow}
           onHide={() => setEditingShow(false)}
           status="editing"
           postId={postId}
         />
-      }
+      } */}
 
       <Button variant="outline-danger" onClick={handleDelete}>刪除</Button>
       {
-        deleteShow &&
-        <DeleteWindow
-          show={deleteShow}
-          onHide={() => setDeleteShow(false)}
-          status="delete"
-          postId={postId}
-        />
+        /*         deleteShow &&
+                <DeleteWindow
+                  show={deleteShow}
+                  onHide={() => setDeleteShow(false)}
+                  status="delete"
+                  postId={postId}
+                /> */
       }
     </div>
   );
@@ -74,14 +74,11 @@ class Posts extends Component {
   }
 
   handleShowWindows = () => {
-    const { showWindows } = this.props;
+    const { showManagementWindow } = this.props;
     const showData = {
-      isShow: true,
-      state: 'create', // 考慮之後改成 method
-      show: true, // 是否顯現的值
-      onHide: () => { console.log('onHide func.') } // 關閉視窗的 function // 似乎沒必要傳入，由 redux 管理即可
+      method: 'create',
     }
-    showWindows(showData)
+    showManagementWindow(showData)
   }
 
   componentDidMount() {
@@ -95,7 +92,7 @@ class Posts extends Component {
 
   render() { /** 之後可以改成兩種呈現方式，條列式格狀顯示 */
     const { isCreate } = this.state;
-    const { history, postsListData, showWindows } = this.props; // 從 Redux 抓資料了
+    const { history, postsListData } = this.props; // 從 Redux 抓資料了
 
     return (
       <div className="blog">
@@ -115,12 +112,12 @@ class Posts extends Component {
               redux 彈出測試
             </Button>
             {
-              isCreate &&
-              <EditingWindow /* 新增共用編輯視窗 */
+              /* isCreate &&
+              <EditingWindow /* 新增共用編輯視窗 
                 show={isCreate}
                 onHide={() => this.handleCreate(false)}
                 status="create"
-              />
+              /> */
             }
           </div>
         </header>

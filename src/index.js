@@ -10,7 +10,7 @@ import { navReducer, postsReducer, wnidowReducer } from './reducer';
 const reducers = combineReducers({
   nav: navReducer,
   posts: postsReducer,
-  showWindow: wnidowReducer,
+  showWindowData: wnidowReducer,
 });
 
 const store = createStore(reducers);
