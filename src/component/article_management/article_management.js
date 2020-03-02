@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import DeleteWindow from './delete_window';
 import EditingWindow from './editing_window';
 import './article_management.css';
-
 
 const ArticleManagement = props => {
   const { method } = props;

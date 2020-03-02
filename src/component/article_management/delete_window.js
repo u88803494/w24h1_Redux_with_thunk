@@ -8,9 +8,6 @@ const DeleteWindow = ({ onHide, show, postId, method, changePosts }) => {
     const changePostsSucess = () => {
       changePosts({ method, postId });
       onHide();
-      /** 第一次退出後顯示會
-      Can't perform a React state update on an unmounted component.
-      但是找不到原因以及如何處理 */
     };
     const finalExecution = (success) => {
       success ? setLoadingState('刪除成功！') : setLoadingState('刪除失敗！');
@@ -20,10 +17,10 @@ const DeleteWindow = ({ onHide, show, postId, method, changePosts }) => {
     }; /** 放內部就不用使用 useCallback */
     if (loadingState === '刪除中........') {
       webAPI.deletePost(postId) // 改變伺服器
-        .then(res => res.status < 300 && finalExecution(true) /* 改變父狀態 */)
+        .then(res => res.status < 300 && finalExecution(true))
         .catch(() => finalExecution(false));
     }
-  }, [loadingState, changePosts, postId, method, onHide]); /* 待研究為什麼需要加入後三者才不報錯 */
+  }, [loadingState, changePosts, postId, method, onHide]);
   const handleDelete = () => {
     setLoadingState('刪除中........');
   };

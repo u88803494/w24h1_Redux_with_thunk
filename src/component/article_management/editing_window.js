@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import * as webAPI from '../../WebAPI';
 import { Button, Modal, Form } from 'react-bootstrap';
-/** 可以考慮用 HOC 拆成新增跟編輯跟 pure component */
+
 const EditingWindow = ({ show, method, postId, posts, onHide, changePosts }) => {
   /** show: 彈出視窗顯示與否，method: 文章送出要用的方法，postId、posts: 用來編輯的資料
    * onHide: 關閉視窗用，changePosts: 上傳文章用 */
-  console.log(show, method, postId, posts);
+
   const newPost = { title: '', author: '', body: '' }; // 新增文章用的預設值
   const editingPost = posts.find(post => post.id === postId); // 取得資料
   const defaultEmpty = { title: false, author: false, body: false, }; // 偵測文章是否為空的預設狀態
@@ -13,31 +13,28 @@ const EditingWindow = ({ show, method, postId, posts, onHide, changePosts }) => 
 
   const [thisPost, setThisPost] = useState(postId ? editingPost : newPost);
   const [isEmpty, setEmpty] = useState(defaultEmpty); // 為了一開始不偵測
-  const [submitType, setSubmitType] = useState(defaultSubmitType);
-  // 一開始先不偵測，因為本身載入的都是有內容的。
+  const [submitType, setSubmitType] = useState(defaultSubmitType); // 一開始先不偵測
 
   const changePost = (e) => {
     if (!e.target.value) { // 輸入時確認是否為空
-      setEmpty({ ...isEmpty, [e.target.name]: true, })
+      setEmpty({ ...isEmpty, [e.target.name]: true, });
     } else {
-      setEmpty({ ...isEmpty, [e.target.name]: false, })
+      setEmpty({ ...isEmpty, [e.target.name]: false, });
     }
-
-    setThisPost({ ...thisPost, [e.target.name]: e.target.value, })
-  }
+    setThisPost({ ...thisPost, [e.target.name]: e.target.value, });
+  };
 
   const handleSubmit = () => {
     if (!thisPost.title || !thisPost.author || !thisPost.body) {
       setSubmitType({ canSubmit: false, status: '資料不全，無法送出，繼續完成資料才可送出', });
       return;
-    }
+    };
 
     const whichAPI = (thisPost, method) => (method === 'create' ?
       webAPI.createPost(thisPost) : webAPI.updatePost(thisPost));
 
     const submitPost = (method, thisPost) => { // 像這個想詢問一下，可以往上獲取資料，我還需要特別傳入嗎？
       changePosts({ method, thisPost }); // 改變 redux 上的 store
-      setThisPost(newPost); // 因為沒有 unmount，所以需要加上。之後搭配整體看能不能實現 unmount
       onHide(); /** 進一步可優化顯示傳送中，成功後顯示成功 */
     }
 
@@ -64,10 +61,7 @@ const EditingWindow = ({ show, method, postId, posts, onHide, changePosts }) => 
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
-      {...{ onHide, show }
-      /* 不太懂為什麼一定要加 ... 直接寫也會出 bug 只知道等同於下面
-      onHide={onHide} show={show}，這樣的寫法是另外變成物件，然後傳給子 component 之後解構嗎
-      */}
+      {...{ onHide, show }}
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">

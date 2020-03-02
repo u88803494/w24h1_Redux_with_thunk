@@ -52,7 +52,6 @@ class Home extends Component {
     ]
     return (
       <div className="homepage">
-        <button onClick={() => this.props.updateNav(Math.random())}>按按看</button>
         <header className="homepage__header">
           <div className="homepage__header--title" >這就是部落格</div>
           <div className="homepage__header--subtitle">this is my blog</div>
