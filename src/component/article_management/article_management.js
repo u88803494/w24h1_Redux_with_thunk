@@ -5,12 +5,12 @@ import './article_management.css';
 
 
 const ArticleManagement = props => {
+  const { method } = props;
   return (
     <>
-      {
-        props.method === 'delete' ?
-          <DeleteWindow {...props} /> : < EditingWindow {...props} /> /** 之後可能要改一下，需要 unmount 才能清空內容 */
-      }
+      {method === 'create' && <EditingWindow {...props} />}
+      {method === 'editing' && <EditingWindow {...props} />}
+      {method === 'delete' && <DeleteWindow {...props} />}
     </>
   )
 }

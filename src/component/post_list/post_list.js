@@ -40,27 +40,51 @@ const ControllerButton = ({ postId }) => {
   );
 };
 
-const RenderPosts = ({ data, history }) => (
-  <>
-    {
-      data.map(post => (
-        <ListGroup.Item
-          key={post.id}
-          className="blog__post"
-        >
-          <div
-            className="blog__title"
-            onClick={() => history.push("/posts/" + post.id)}
-          >
-            {post.title}
-          </div>
-          <ControllerButton postId={post.id} />
-        </ListGroup.Item>
-      ))
-    }
-  </>
-)
+const RenderPosts = ({ data, history, showManagementWindow }) => {
+  const handleShow = (e) => {
+    const { id, name } = e.target.dataset;
+    showManagementWindow({ method: name, postId: parseInt(id) }); // event 接收的是 string
+  }
 
+  return (
+    <>
+      {
+        data.map(post => (
+          <ListGroup.Item
+            key={post.id}
+            className="blog__post"
+          >
+            <div
+              className="blog__title"
+              onClick={() => history.push("/posts/" + post.id)}
+            >
+              {post.title}
+            </div>
+            {/* <ControllerButton postId={post.id} /> */}
+            <div className="blog__controller">
+              <Button
+                variant="outline-success"
+                data-name="editing"
+                data-id={post.id}
+                onClick={handleShow}
+              >
+                編輯
+              </Button>
+              <Button
+                variant="outline-danger"
+                data-name="delete"
+                data-id={post.id}
+                onClick={handleShow}
+              >
+                刪除
+              </Button>
+            </div>
+          </ListGroup.Item>
+        ))
+      }
+    </>
+  )
+}
 class Posts extends Component {
   constructor(props) {
     super(props);
@@ -73,12 +97,9 @@ class Posts extends Component {
     this.setState({ isCreate, })
   }
 
-  handleShowWindows = () => {
+  handleShowWindows = (e) => {
     const { showManagementWindow } = this.props;
-    const showData = {
-      method: 'create',
-    }
-    showManagementWindow(showData)
+    showManagementWindow({ method: e.target.name })
   }
 
   componentDidMount() {
@@ -92,7 +113,7 @@ class Posts extends Component {
 
   render() { /** 之後可以改成兩種呈現方式，條列式格狀顯示 */
     const { isCreate } = this.state;
-    const { history, postsListData } = this.props; // 從 Redux 抓資料了
+    const { history, postsListData, showManagementWindow } = this.props; // 從 Redux 抓資料了
 
     return (
       <div className="blog">
@@ -108,6 +129,7 @@ class Posts extends Component {
             <Button
               variant="outline-primary"
               onClick={this.handleShowWindows}
+              name="create"
             >
               redux 彈出測試
             </Button>
@@ -126,7 +148,7 @@ class Posts extends Component {
             postsListData.length ?
               <RenderPosts
                 data={postsListData}
-                history={history}
+                {...{ history, showManagementWindow }}
               /> :
               <Spinner animation="border" />
           }

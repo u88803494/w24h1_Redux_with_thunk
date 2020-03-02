@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import * as webAPI from '../../WebAPI';
 import { Button, Modal, Form } from 'react-bootstrap';
-
+/** 可以考慮用 HOC 拆成新增跟編輯跟 pure component */
 const EditingWindow = ({ show, method, postId, posts, onHide, changePosts }) => {
   /** show: 彈出視窗顯示與否，method: 文章送出要用的方法，postId、posts: 用來編輯的資料
    * onHide: 關閉視窗用，changePosts: 上傳文章用 */
@@ -32,11 +32,11 @@ const EditingWindow = ({ show, method, postId, posts, onHide, changePosts }) => 
       return;
     }
 
-    const whichAPI = (thisPost, status) => (status === 'create' ?
+    const whichAPI = (thisPost, method) => (method === 'create' ?
       webAPI.createPost(thisPost) : webAPI.updatePost(thisPost));
 
-    const submitPost = (status, thisPost) => { // 像這個想詢問一下，可以往上獲取資料，我還需要特別傳入嗎？
-      changePosts({ status, thisPost }); // 改變 redux 上的 store
+    const submitPost = (method, thisPost) => { // 像這個想詢問一下，可以往上獲取資料，我還需要特別傳入嗎？
+      changePosts({ method, thisPost }); // 改變 redux 上的 store
       setThisPost(newPost); // 因為沒有 unmount，所以需要加上。之後搭配整體看能不能實現 unmount
       onHide(); /** 進一步可優化顯示傳送中，成功後顯示成功 */
     }
@@ -57,7 +57,6 @@ const EditingWindow = ({ show, method, postId, posts, onHide, changePosts }) => 
     if (thisPost.title && thisPost.author && thisPost.body) {
       setSubmitType({ canSubmit: true, status: '', });
     } // render 檢測值是否為空
-    console.log('componenDidUpdate')
   }, [thisPost])
 
   return (
@@ -144,7 +143,6 @@ const EditingWindow = ({ show, method, postId, posts, onHide, changePosts }) => 
         </Modal.Footer>
       </Form>
     </Modal>
-    /* 編輯送出之後，還要讓整個資料可以改變 */
   );
 }
 

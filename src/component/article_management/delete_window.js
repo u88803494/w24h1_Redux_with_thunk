@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import * as webAPI from '../../WebAPI';
 import { Button, Modal } from 'react-bootstrap';
 
-const DeleteWindow = ({ onHide, show, postId, status, changePosts }) => {
+const DeleteWindow = ({ onHide, show, postId, method, changePosts }) => {
   const [loadingState, setLoadingState] = useState('是的，我要刪除');
   useEffect(() => {
     const changePostsSucess = () => {
-      changePosts({ status, postId });
+      changePosts({ method, postId });
       onHide();
       /** 第一次退出後顯示會
       Can't perform a React state update on an unmounted component.
@@ -23,7 +23,7 @@ const DeleteWindow = ({ onHide, show, postId, status, changePosts }) => {
         .then(res => res.status < 300 && finalExecution(true) /* 改變父狀態 */)
         .catch(() => finalExecution(false));
     }
-  }, [loadingState, changePosts, postId, status, onHide]); /* 待研究為什麼需要加入後三者才不報錯 */
+  }, [loadingState, changePosts, postId, method, onHide]); /* 待研究為什麼需要加入後三者才不報錯 */
   const handleDelete = () => {
     setLoadingState('刪除中........');
   };

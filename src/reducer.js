@@ -33,10 +33,10 @@ function navReducer(globalState = navState, action) {
 }
 
 const postsReducer = (globalState = postsState, action) => {
-  const handleChangePosts = ({ status, thisPost, postId }) => {
+  const handleChangePosts = ({ method, thisPost, postId }) => {
     /** 第一個變數是方式，第二個變更的資料 */
     const { postsListData } = globalState;
-    switch (status) {
+    switch (method) {
       case 'create':
         const id = postsListData.length !== 0 ? postsListData[0].id + 1 : 1;
         return {
@@ -59,6 +59,8 @@ const postsReducer = (globalState = postsState, action) => {
           })
         };
       case 'delete':
+        console.log(postsListData)
+        console.log(postsListData.filter(post => post.id !== postId))
         return {
           postsListData: postsListData.filter(post => post.id !== postId)
         }
@@ -80,8 +82,8 @@ const postsReducer = (globalState = postsState, action) => {
 }
 
 const windowState = {
-  method: 'create',
-  show: true, // 是否顯現的值
+  method: '',
+  show: false, // 是否顯現的值
   postId: null,
 } // 之後記得整理在一起
 /** 上方的資料可能要分開寫或寫一起都可以，這點是要思考的，
