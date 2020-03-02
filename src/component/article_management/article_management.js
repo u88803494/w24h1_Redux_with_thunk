@@ -3,7 +3,7 @@ import DeleteWindow from './delete_window';
 import EditingWindow from './editing_window';
 import './article_management.css';
 
-const ArticleManagement = props => {
+const ArticleManagement = (props) => {
   const { method } = props;
   return (
     <>
@@ -11,7 +11,7 @@ const ArticleManagement = props => {
       {method === 'editing' && <EditingWindow {...props} />}
       {method === 'delete' && <DeleteWindow {...props} />}
     </>
-  )
-}
+  );
+};
 
 export default ArticleManagement;

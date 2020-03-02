@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, Route } from "react-router-dom";
+import { Link, Route } from 'react-router-dom';
 import { Nav, Navbar } from 'react-bootstrap';
 import './nav.css';
 
@@ -8,29 +8,29 @@ const Item = ({ to, text, exact }) => (
     path={to}
     exact={exact}
     children={({ match }) => (
-      <Link to={to} className={`nav-link ${match ? "active" : ""}`}>
+      <Link to={to} className={`nav-link ${match ? 'active' : ''}`}>
         {text}
       </Link>
     )}
   />
-)
+);
 
 class TheNavbar extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       positionY: window.pageYOffset,
       movedY: 0,
       isHidden: false,
-    }
+    };
   }
 
   componentDidMount() {
-    window.addEventListener('scroll', this.handleScroll)
+    window.addEventListener('scroll', this.handleScroll);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('scroll', this.handleScroll)
+    window.removeEventListener('scroll', this.handleScroll);
   }
 
   /** 效率可能擔心用太多 setState
@@ -50,7 +50,7 @@ class TheNavbar extends React.Component {
   calculateScrollWidth = (lastPositonY) => {
     const { movedY } = this.state;
     const ScrollWidth = window.pageYOffset - lastPositonY; // 當前位置扣掉原始位置的高度
-    this.setState({ movedY: movedY + ScrollWidth, }, this.shouldHidden)
+    this.setState({ movedY: movedY + ScrollWidth }, this.shouldHidden);
   }
 
   shouldHidden = () => {
@@ -59,12 +59,12 @@ class TheNavbar extends React.Component {
       this.setState({
         movedY: 0,
         isHidden: true,
-      })
+      });
     } else if (movedY <= -175 || positionY <= 35) {
       this.setState({
         movedY: 0,
         isHidden: false,
-      })
+      });
     }
   }
 
@@ -78,20 +78,20 @@ class TheNavbar extends React.Component {
         bg="dark"
         variant="dark"
         fixed="top"
-        className={isHidden && "navbar--hide"}
+        className={isHidden && 'navbar--hide'}
       >
         <Navbar.Brand href="/#">React-Blog</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="mr-auto">
-            <Item to='/' exact={true} text='首頁' />
-            <Item to='/posts' text='文章列表' />
-            <Item to='/about' text='關於本站' />
+            <Item to="/" exact text="首頁" />
+            <Item to="/posts" text="文章列表" />
+            <Item to="/about" text="關於本站" />
           </Nav>
         </Navbar.Collapse>
       </Navbar>
-    )
-  };
+    );
+  }
 }
 
 export default TheNavbar;

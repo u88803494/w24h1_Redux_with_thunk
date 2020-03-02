@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
-import { getPosts } from '../../WebAPI';
 import { ListGroup, Button, Spinner } from 'react-bootstrap';
+import { getPosts } from '../../WebAPI';
 import './post_list.css';
 
 const RenderPosts = ({ data, history, showManagementWindow }) => {
   const handleShow = (e) => {
     const { id, name } = e.target.dataset;
-    showManagementWindow({ method: name, postId: parseInt(id) }); // event 接收的是 string
-  }
+    showManagementWindow({ method: name, postId: parseInt(id, 10) }); // event 接收的是 string
+  };
 
   return (
     <>
@@ -19,7 +19,7 @@ const RenderPosts = ({ data, history, showManagementWindow }) => {
         >
           <div
             className="blog__title"
-            onClick={() => history.push("/posts/" + post.id)}
+            onClick={() => history.push(`/posts/${post.id}`)}
           >
             {post.title}
           </div>
@@ -31,7 +31,7 @@ const RenderPosts = ({ data, history, showManagementWindow }) => {
               onClick={handleShow}
             >
               編輯
-              </Button>
+            </Button>
             <Button
               variant="outline-danger"
               data-name="delete"
@@ -39,24 +39,26 @@ const RenderPosts = ({ data, history, showManagementWindow }) => {
               onClick={handleShow}
             >
               刪除
-              </Button>
+            </Button>
           </div>
         </ListGroup.Item>
       ))}
     </>
-  )
-}
+  );
+};
 
-const Posts = ({ history, postsListData, showManagementWindow, updatePosts }) => {
-  const handleShowWindows = (e) => showManagementWindow({ method: e.target.name });
+const Posts = ({
+  history, postsListData, showManagementWindow, updatePosts,
+}) => {
+  const handleShowWindows = e => showManagementWindow({ method: e.target.name });
 
   useEffect(() => {
     getPosts() // call api 也許可以改在 RenderPosts 那裡
-      .then(res => {
+      .then((res) => {
         const result = res.data // 篩選無用資料
           .filter(({ title, author, body }) => title && author && body);
         updatePosts(result); // 傳給 Redux
-      })
+      });
   }, [updatePosts]);
 
   return (
@@ -71,13 +73,13 @@ const Posts = ({ history, postsListData, showManagementWindow, updatePosts }) =>
       </header>
       <main className="blog__posts">
         {/** 判斷是否讀取中 */
-          postsListData.length ?
-            <RenderPosts data={postsListData} {...{ history, showManagementWindow }} />
+          postsListData.length
+            ? <RenderPosts data={postsListData} {...{ history, showManagementWindow }} />
             : <Spinner animation="border" />
         }
       </main>
     </div>
-  )
-}
+  );
+};
 
 export default withRouter(Posts);

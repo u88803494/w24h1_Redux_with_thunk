@@ -2,13 +2,12 @@ import React from 'react';
 import { Jumbotron } from 'react-bootstrap';
 import './about.css';
 
-function About() {
-  return (
-    <div className="about">
-      <Jumbotron>
-        <h1 className="about__title">maxime quas veniam</h1>
-        <pre className="about__content">
-          {`
+const About = () => (
+  <div className="about">
+    <Jumbotron>
+      <h1 className="about__title">maxime quas veniam</h1>
+      <pre className="about__content">
+        {`
           Lorem ipsum dolor sit amet consectetur adipisicing elit.
           Omnis alias harum voluptatem nostrum vero mollitia cum,
           voluptas neque praesentium provident quasi, obcaecati enim consequatur illo.
@@ -20,10 +19,10 @@ function About() {
           reprehenderit recusandae consequuntur iusto eos quis ipsum veritatis,
           tempore deleniti totam sunt nisi a!
           `}
-        </pre>
-      </Jumbotron>
-    </div>
-  );
-}
+      </pre>
+    </Jumbotron>
+  </div>
+);
+
 
 export default About;

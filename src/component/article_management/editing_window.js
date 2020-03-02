@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import * as webAPI from '../../WebAPI';
 import { Button, Modal, Form } from 'react-bootstrap';
+import * as webAPI from '../../WebAPI';
 
-const EditingWindow = ({ show, method, postId, posts, onHide, changePosts }) => {
+const EditingWindow = ({
+  show, method, postId, posts, onHide, changePosts,
+}) => {
   /** show: 彈出視窗顯示與否，method: 文章送出要用的方法，postId、posts: 用來編輯的資料
    * onHide: 關閉視窗用，changePosts: 上傳文章用 */
 
   const newPost = { title: '', author: '', body: '' }; // 新增文章用的預設值
   const editingPost = posts.find(post => post.id === postId); // 取得資料
-  const defaultEmpty = { title: false, author: false, body: false, }; // 偵測文章是否為空的預設狀態
-  const defaultSubmitType = { canSubmit: true, status: '', }; // 是否可以提交的預設狀態
+  const defaultEmpty = { title: false, author: false, body: false }; // 偵測文章是否為空的預設狀態
+  const defaultSubmitType = { canSubmit: true, status: '' }; // 是否可以提交的預設狀態
 
   const [thisPost, setThisPost] = useState(postId ? editingPost : newPost);
   const [isEmpty, setEmpty] = useState(defaultEmpty); // 為了一開始不偵測
@@ -17,44 +19,44 @@ const EditingWindow = ({ show, method, postId, posts, onHide, changePosts }) => 
 
   const changePost = (e) => {
     if (!e.target.value) { // 輸入時確認是否為空
-      setEmpty({ ...isEmpty, [e.target.name]: true, });
+      setEmpty({ ...isEmpty, [e.target.name]: true });
     } else {
-      setEmpty({ ...isEmpty, [e.target.name]: false, });
+      setEmpty({ ...isEmpty, [e.target.name]: false });
     }
-    setThisPost({ ...thisPost, [e.target.name]: e.target.value, });
+    setThisPost({ ...thisPost, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = () => {
     if (!thisPost.title || !thisPost.author || !thisPost.body) {
-      setSubmitType({ canSubmit: false, status: '資料不全，無法送出，繼續完成資料才可送出', });
+      setSubmitType({ canSubmit: false, status: '資料不全，無法送出，繼續完成資料才可送出' });
       return;
-    };
+    }
 
-    const whichAPI = (thisPost, method) => (method === 'create' ?
-      webAPI.createPost(thisPost) : webAPI.updatePost(thisPost));
+    const whichAPI = () => (method === 'create'
+      ? webAPI.createPost(thisPost) : webAPI.updatePost(thisPost));
 
-    const submitPost = (method, thisPost) => { // 像這個想詢問一下，可以往上獲取資料，我還需要特別傳入嗎？
+    const submitPost = () => { // 像這個想詢問一下，可以往上獲取資料，我還需要特別傳入嗎？
       changePosts({ method, thisPost }); // 改變 redux 上的 store
       onHide(); /** 進一步可優化顯示傳送中，成功後顯示成功 */
-    }
+    };
 
     const onError = (err) => {
-      setSubmitType({ canSubmit: false, status: `發生問題無法送出 ${err}`, });
-    }
+      setSubmitType({ canSubmit: false, status: `發生問題無法送出 ${err}` });
+    };
 
     whichAPI(thisPost, method)
       .then(res => res.status <= 300 && submitPost(method, thisPost))
-      .catch(err => onError(err)) // .then .catch 是否會自己判斷 status?
+      .catch(err => onError(err)); // .then .catch 是否會自己判斷 status?
     /** 可加上 google CAPTCHA 驗證
      * 之前曾經用過，之後可以加上個驗證功能
     */
-  }
+  };
 
   useEffect(() => { // 相當於 componenDidUpdate
     if (thisPost.title && thisPost.author && thisPost.body) {
-      setSubmitType({ canSubmit: true, status: '', });
+      setSubmitType({ canSubmit: true, status: '' });
     } // render 檢測值是否為空
-  }, [thisPost])
+  }, [thisPost]);
 
   return (
     <Modal
@@ -65,7 +67,7 @@ const EditingWindow = ({ show, method, postId, posts, onHide, changePosts }) => 
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          {method === "editing" ? "你正在編輯文章" : "你正在新增文章"}
+          {method === 'editing' ? '你正在編輯文章' : '你正在新增文章'}
         </Modal.Title>
       </Modal.Header>
       <Form>
@@ -138,6 +140,6 @@ const EditingWindow = ({ show, method, postId, posts, onHide, changePosts }) => 
       </Form>
     </Modal>
   );
-}
+};
 
 export default EditingWindow;

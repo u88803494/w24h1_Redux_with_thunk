@@ -1,28 +1,23 @@
 import React from 'react';
 import './footer.css';
 
-function Footer() {
-  return (
-      <footer className="footer">
-      <div className="footer__body">
-        <div className="footer_owner">
-          {`Made with `}
-          <span className="footer__icon">{` ♥ `}</span>
-          {`by `}
-          <a
-            href="https://github.com/u88803494"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {`hugh`}
-          </a>
-        </div>
-
+const Footer = () => (
+  <footer className="footer">
+    <div className="footer__body">
+      <div className="footer_owner">
+        Made with
+        <span className="footer__icon"> ♥ </span>
+        by
+        <a
+          href="https://github.com/u88803494"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {` hugh`}
+        </a>
       </div>
-
-
-    </footer>
-  );
-}
+    </div>
+  </footer>
+);
 
 export default Footer;
