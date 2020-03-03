@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-unresolved
 import axios from 'axios';
 
 export const createPost = post => axios.post('https://qootest.com/posts/', post);

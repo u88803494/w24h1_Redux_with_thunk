@@ -12,7 +12,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   changePosts: post => dispatch(changePosts(post)),
   showManagementWindow: showData => dispatch(showManagementWindow(showData)),
-  onHide: hideData => dispatch(hideMangementWindow(hideData)),
+  onHide: () => dispatch(hideMangementWindow()),
 });
 
 export default connect(
