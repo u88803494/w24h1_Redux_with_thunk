@@ -1,9 +1,13 @@
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
 import { Jumbotron } from 'react-bootstrap';
 import './about.css';
 
+const input = '## This is a header\n\nAnd this is a paragraph'
+
 const About = () => (
   <div className="about">
+    <ReactMarkdown source={input} />
     <Jumbotron>
       <h1 className="about__title">maxime quas veniam</h1>
       <pre className="about__content">
