@@ -9,6 +9,7 @@ const mapStateToProps = state => ({
   ...state.showWindowData,
   posts: state.posts.postsListData,
 });
+
 const mapDispatchToProps = dispatch => ({
   changePosts: post => dispatch(changePosts(post)),
   showManagementWindow: showData => dispatch(showManagementWindow(showData)),

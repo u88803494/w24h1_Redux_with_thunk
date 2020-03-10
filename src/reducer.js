@@ -49,6 +49,7 @@ const postsReducer = (globalState = postsState, action) => {
       default:
         return null;
     }
+    /** 把 call API 一種改成一個 action，然後也不必自己改資料，因為每次都是取得最新 */
   };
 
   switch (action.type) {
