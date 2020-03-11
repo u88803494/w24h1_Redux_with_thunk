@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 import { Button, Spinner } from 'react-bootstrap';
 import { getPost } from '../../WebAPI';
 import './post.css';
@@ -13,7 +14,7 @@ const ControllerButton = () => (
 );
 
 const ArticleContent = ({ post, date }) => (
-  <>
+  <article>
     <header className="article__header">
       <h1>{post.title}</h1>
       <div className="article__meta">
@@ -29,8 +30,8 @@ const ArticleContent = ({ post, date }) => (
       </div>
     </header>
     <hr />
-    <pre className="article__body">{post.body}</pre>
-  </>
+    <ReactMarkdown className="article__body" source={post.body} />
+  </article>
 );
 
 class Post extends Component {

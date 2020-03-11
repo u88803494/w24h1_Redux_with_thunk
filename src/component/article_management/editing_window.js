@@ -104,7 +104,9 @@ const EditingWindow = ({
           </Form.Group>
           <Form.Group>
             <div className="form__datatype">
-              <Form.Label>內文</Form.Label>
+              <Form.Label>
+                內文
+              </Form.Label>
               <Form.Text className="form__empty">
                 {isEmpty.body && '內容不能為空'}
               </Form.Text>
@@ -113,14 +115,19 @@ const EditingWindow = ({
               name="body"
               as="textarea"
               rows="5"
-              placeholder="輸入內文"
+              placeholder="輸入內文 支援 markdown 格式"
               value={thisPost && thisPost.body}
               onChange={changePost}
             />
           </Form.Group>
-          <Form.Text className="form__empty form__empty--submit">
-            {submitType.status}
-          </Form.Text>
+          <div className="form__datatype">
+            <Form.Text className="form__notice">
+              {'支援 markdown 格式'}
+            </Form.Text>
+            <Form.Text className="form__empty form__empty--submit">
+              {submitType.status}
+            </Form.Text>
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button

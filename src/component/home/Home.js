@@ -69,12 +69,12 @@ const Home = () => {
       <hr />
       <main className="homepage__main">
         <div className="main__askwhy">
-          <div className="main__askwhy--content">
+          <strong className="main__askwhy--content">
             <li>你想要寫 BLOG 卻沒地方去？</li>
             <li>簡單的特效就好，但是市面上的 blog 都很複雜</li>
             <li>想回到那個美好純真的年代嗎？</li>
             <li>回歸部落格的本質想寫什麼就寫什麼？</li>
-          </div>
+          </strong>
         </div>
         <div className="main__advantages">
           <Advantages avaData={avaData} />

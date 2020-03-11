@@ -7,6 +7,10 @@
   color: red;
 }
 
+.form__notice {
+  color: #03a9f4;
+}
+
 .form__empty--submit {
   display: flex;
   justify-content: flex-end;
