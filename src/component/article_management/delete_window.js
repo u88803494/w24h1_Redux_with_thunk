@@ -3,7 +3,7 @@ import { Button, Modal } from 'react-bootstrap';
 import * as webAPI from '../../WebAPI';
 
 const DeleteWindow = ({
-  onHide, show, postId, method, changePosts,
+  onHide, show, postId, method, changePosts, deletePost
 }) => {
   const [loadingState, setLoadingState] = useState('是的，我要刪除');
 
@@ -22,9 +22,10 @@ const DeleteWindow = ({
     }; /** 放內部就不用使用 useCallback */
 
     if (loadingState === '刪除中........') {
-      webAPI.deletePost(postId) // 改變伺服器
-        .then(res => res.status < 300 && finalExecution(true))
-        .catch(() => finalExecution(false));
+      // webAPI.deletePost(postId) // 改變伺服器
+      //   .then(res => res.status < 300 && finalExecution(true))
+      //   .catch(() => finalExecution(false));
+      deletePost(postId)
     }
   }, [loadingState, changePosts, postId, method, onHide]);
 

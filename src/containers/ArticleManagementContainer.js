@@ -1,19 +1,23 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import ArticleManagement from '../component/article_management';
-import { changePosts, showManagementWindow, hideMangementWindow } from '../actions';
+import * as actions from '../actions';
 
 const ArticleManagementContainer = props => <ArticleManagement {...props} />;
 
-const mapStateToProps = state => ({
-  ...state.showWindowData,
-  posts: state.posts.postsListData,
-});
+const mapStateToProps = state => {
+  console.log(state)
+  return ({
+    ...state.postState,
+    posts: state.posts.postsListData,
+  });
+}
 
 const mapDispatchToProps = dispatch => ({
-  changePosts: post => dispatch(changePosts(post)),
-  showManagementWindow: showData => dispatch(showManagementWindow(showData)),
-  onHide: () => dispatch(hideMangementWindow()),
+  changePosts: post => dispatch(actions.changePosts(post)),
+  deletePost: id => dispatch(actions.deletePost(id)),
+  showManagementWindow: showData => dispatch(actions.showManagementWindow(showData)),
+  onHide: () => dispatch(actions.hideMangementWindow()),
 });
 
 export default connect(

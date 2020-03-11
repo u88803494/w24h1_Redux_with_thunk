@@ -11,7 +11,7 @@ import { postsReducer, wnidowReducer } from './reducer';
 
 const reducers = combineReducers({
   posts: postsReducer,
-  showWindowData: wnidowReducer,
+  postState: wnidowReducer,
 });
 
 const store = createStore(reducers, applyMiddleware(promise, logger));

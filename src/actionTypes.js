@@ -1,3 +1,4 @@
+export const GET_POST = 'GET_POST';
 export const GET_POSTS = 'GET_POSTS';
 
 export const UPDATE_POSTS_LIST = 'UPDATE_POSTS_LIST';

@@ -67,10 +67,18 @@ const postsReducer = (globalState = postsState, action) => {
       };
     case actionTypes.CHANGE_POSTS:
       return handleChangePosts(action.post);
-
-    case actionTypes.CREATE_POST:
-      console.log('創造')
-      return null
+    case `${actionTypes.CREATE_POST}_PENDING`:
+      console.log('創造_PENDING')
+      return null;
+    case `${actionTypes.CREATE_POST}_FULFILLED`:
+      console.log('創造_FULFILLED')
+      return null;
+    case `${actionTypes.DELETE_POST}_PENDING`:
+      console.log('刪除_PENDING')
+      return null;
+    case `${actionTypes.DELETE_POST}_FULFILLED`:
+      console.log('刪除_FULFILLED')
+      return null;
     default:
       return globalState;
   }
