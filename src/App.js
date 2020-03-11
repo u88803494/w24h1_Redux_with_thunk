@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-filename-extension */
-/* eslint-disable import/no-unresolved */
 import React from 'react';
 import './App.css';
 import { HashRouter as Router, Route } from 'react-router-dom';

@@ -1,12 +1,8 @@
-import {
-  UPDATE_POSTS_LIST,
-  CHANGE_POSTS,
-  SHOW_ARTICLE_MANAGEMENT_WINDOW,
-  HIDE_ARTICLE_MANAGEMENT_WINDOW,
-} from './actionTypes';
+import * as actionTypes from './actionTypes';
 
 const postsState = {
   postsListData: [],
+  isLoadingGetPosts: false, // 是否取讀資料中
 };
 
 const windowState = {
@@ -53,12 +49,28 @@ const postsReducer = (globalState = postsState, action) => {
   };
 
   switch (action.type) {
-    case UPDATE_POSTS_LIST:
+    case `${actionTypes.GET_POSTS}_PENDING`:
+      return {
+        ...globalState,
+        isLoadingGetPosts: true,
+      };
+    case `${actionTypes.GET_POSTS}_FULFILLED`:
+      return {
+        ...globalState,
+        isLoadingGetPosts: false,
+        postsListData: action.payload.data // 篩選資料
+          .filter(({ title, author, body }) => title && author && body),
+      };
+    case actionTypes.UPDATE_POSTS_LIST:
       return {
         postsListData: action.posts,
       };
-    case CHANGE_POSTS:
+    case actionTypes.CHANGE_POSTS:
       return handleChangePosts(action.post);
+
+    case actionTypes.CREATE_POST:
+      console.log('創造')
+      return null
     default:
       return globalState;
   }
@@ -66,12 +78,12 @@ const postsReducer = (globalState = postsState, action) => {
 
 const wnidowReducer = (globalState = windowState, action) => {
   switch (action.type) {
-    case SHOW_ARTICLE_MANAGEMENT_WINDOW:
+    case actionTypes.SHOW_ARTICLE_MANAGEMENT_WINDOW:
       return {
         ...action.postState,
         show: true,
       };
-    case HIDE_ARTICLE_MANAGEMENT_WINDOW:
+    case actionTypes.HIDE_ARTICLE_MANAGEMENT_WINDOW:
       return {
         ...windowState, // 把狀態還原
       };

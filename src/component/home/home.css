@@ -40,7 +40,8 @@
   margin: 100px auto;
 }
 
-.main__advantages--btn, .main__CTA-btn {
+.main__advantages--btn,
+.main__CTA-btn {
   margin-top: 20px;
   text-align: center;
 }
@@ -57,13 +58,13 @@
   margin: 50px 20px;
 }
 
-@media screen and (max-width: 499px) {
+@media screen and (max-width: 480px) {
   .main__askwhy {
     max-width: 300px;
     margin: 30px auto;
   }
 
-  .main__askwhy--content {
-    font-size: 13px;
-  }  
+  .mobile__fontsize {
+    font-size: 82%;
+  }
 }

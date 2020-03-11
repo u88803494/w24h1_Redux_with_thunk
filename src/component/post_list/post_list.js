@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
 import { ListGroup, Button, Spinner } from 'react-bootstrap';
-import { getPosts } from '../../WebAPI';
 import './post_list.css';
 
 const RenderPosts = ({ data, history, showManagementWindow }) => {
@@ -48,18 +47,13 @@ const RenderPosts = ({ data, history, showManagementWindow }) => {
 };
 
 const Posts = ({
-  history, postsListData, showManagementWindow, updatePosts,
+  history, postsListData, showManagementWindow, getPosts, isLoadingGetPosts
 }) => {
   const handleShowWindows = e => showManagementWindow({ method: e.target.name });
 
   useEffect(() => {
-    getPosts() // call api 也許可以改在 RenderPosts 那裡
-      .then((res) => {
-        const result = res.data // 篩選無用資料
-          .filter(({ title, author, body }) => title && author && body);
-        updatePosts(result); // 傳給 Redux
-      });
-  }, [updatePosts]);
+    getPosts();
+  }, [getPosts]);
 
   return (
     <div className="blog">
@@ -73,7 +67,7 @@ const Posts = ({
       </header>
       <main className="blog__posts">
         {/** 判斷是否讀取中 */
-          postsListData.length
+          !isLoadingGetPosts
             ? <RenderPosts data={postsListData} {...{ history, showManagementWindow }} />
             : <Spinner animation="border" />
         }
