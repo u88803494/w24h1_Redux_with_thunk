@@ -7,7 +7,8 @@ const EditingWindow = ({
 }) => {
   /** show: 彈出視窗顯示與否，method: 文章送出要用的方法，postId、posts: 用來編輯的資料
    * onHide: 關閉視窗用，changePosts: 上傳文章用 */
-
+  
+   // 根據官網的說法，初始值改成 function 的形式，疑似比較省資源，或是官方的意思是直接在把初始值寫成 function 放在裡面
   const newPost = { title: '', author: '', body: '' }; // 新增文章用的預設值
   const editingPost = posts.find(post => post.id === postId); // 取得資料
   const defaultEmpty = { title: false, author: false, body: false }; // 偵測文章是否為空的預設狀態
@@ -35,7 +36,7 @@ const EditingWindow = ({
     const whichAPI = () => (method === 'create'
       ? webAPI.createPost(thisPost) : webAPI.updatePost(thisPost));
 
-    const submitPost = () => { // 像這個想詢問一下，可以往上獲取資料，我還需要特別傳入嗎？
+    const submitPost = () => {
       changePosts({ method, thisPost }); // 改變 redux 上的 store
       onHide(); /** 進一步可優化顯示傳送中，成功後顯示成功 */
     };

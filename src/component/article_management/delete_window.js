@@ -27,7 +27,12 @@ const DeleteWindow = ({
       //   .catch(() => finalExecution(false));
       deletePost(postId)
     }
-  }, [loadingState, changePosts, postId, method, onHide]);
+  }, [loadingState, changePosts, method, onHide, postId, deletePost]);
+  /**
+   * 讓刪除成功之後才利用 useEffect 去呼叫移除資料，可以監聽 redux 傳下來的 props
+   * 並且把 useEffect 拆開成兩個邏輯 1. 呼叫刪除的邏輯 2. 刪除成功或失敗的邏輯。
+   * 另一個是把刪除狀態的值放到 reudx，useEffect 的 dependency 等同於 prevPorp !== prop
+   */
 
   const handleDelete = () => setLoadingState('刪除中........');
 

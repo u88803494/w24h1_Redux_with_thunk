@@ -6,7 +6,7 @@ import * as actions from '../actions';
 const ArticleManagementContainer = props => <ArticleManagement {...props} />;
 
 const mapStateToProps = state => {
-  console.log(state)
+  // console.log(state)
   return ({
     ...state.postState,
     posts: state.posts.postsListData,

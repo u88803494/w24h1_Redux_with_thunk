@@ -3,10 +3,11 @@ import * as actionTypes from './actionTypes';
 const postsState = {
   postsListData: [],
   isLoadingGetPosts: false, // 是否取讀資料中
+  isProcessing: null,
 };
 
 const windowState = {
-  method: '',
+  method: '', // 研究一下是否改為一個動作一個 action 之後就不需要 method
   show: false, // 是否顯現的值
   postId: null,
 };
@@ -65,7 +66,7 @@ const postsReducer = (globalState = postsState, action) => {
       return {
         postsListData: action.posts,
       };
-    case actionTypes.CHANGE_POSTS:
+    case actionTypes.CHANGE_POSTS: // 待刪除
       return handleChangePosts(action.post);
     case `${actionTypes.CREATE_POST}_PENDING`:
       console.log('創造_PENDING')
@@ -73,16 +74,34 @@ const postsReducer = (globalState = postsState, action) => {
     case `${actionTypes.CREATE_POST}_FULFILLED`:
       console.log('創造_FULFILLED')
       return null;
+
+    case actionTypes.DELETE_POST:
+      console.log('刪除', globalState, action)
+      return {
+        ...globalState,
+        // postsListData: globalState.postsListData.filter(post => post.id !== postId),
+      };
     case `${actionTypes.DELETE_POST}_PENDING`:
-      console.log('刪除_PENDING')
-      return null;
+      console.log('刪除_PENDING', globalState, action)
+      return {
+        ...globalState,
+        isProcessing: 'delete',
+      };
     case `${actionTypes.DELETE_POST}_FULFILLED`:
-      console.log('刪除_FULFILLED')
-      return null;
+      console.log('刪除_FULFILLED', globalState, action)
+      return {
+        ...globalState,
+        isProcessing: null,
+        // postsListData: globalState.postsListData.filter(post => post.id !== postId),
+      };
     default:
       return globalState;
   }
 };
+/** 除此之外還要多寫 reject 的反應 
+ * 然後是有兩種方式一種是傳送成功之後呼叫改值的 action 
+ * 另外一種就是修改了，會比較麻煩一點
+*/
 
 const wnidowReducer = (globalState = windowState, action) => {
   switch (action.type) {

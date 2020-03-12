@@ -52,7 +52,7 @@ const Posts = ({
   const handleShowWindows = e => showManagementWindow({ method: e.target.name });
 
   useEffect(() => {
-    getPosts();
+    getPosts(); // 可能要改成 componentDidMount
   }, [getPosts]);
 
   return (

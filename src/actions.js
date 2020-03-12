@@ -18,6 +18,7 @@ export const updatePosts = posts => ({
 
 export const deletePost = (id) => ({
   type: action.DELETE_POST,
+  postId: id,
   payload: WebAPI.deletePost(id),
 });
 
