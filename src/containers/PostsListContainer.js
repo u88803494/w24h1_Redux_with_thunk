@@ -9,12 +9,13 @@ const mapStateToProps = state => {
   // console.log(state)
   return ({ // return 時，告訴需要什麼資料
     postsListData: state.posts.postsListData,
+    shouldGetPosts: state.posts.shouldGetPosts,
   });
 }
 
 const mapDispatchToProps = dispatch => ({
   showManagementWindow: showData => dispatch(actions.showManagementWindow(showData)),
-  getPosts: () => dispatch(actions.getPosts()),
+  getPosts: () => dispatch(actions.getPostsList()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PostsContainer);

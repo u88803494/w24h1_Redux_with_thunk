@@ -1,40 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal } from 'react-bootstrap';
-import * as webAPI from '../../WebAPI';
 
 const DeleteWindow = ({
-  onHide, show, postId, method, changePosts, deletePost
+  onHide, show, postId, deletePost, shouldGetPosts, error
 }) => {
   const [loadingState, setLoadingState] = useState('是的，我要刪除');
 
-  useEffect(() => {
-    const changePostsSucess = () => {
-      changePosts({ method, postId });
-      onHide();
-    };
-
-    const isSuccess = success => (success ? setLoadingState('刪除成功！') : setLoadingState('刪除失敗！'));
-    const deleteReset = success => (success ? changePostsSucess() : setLoadingState('是的，我要刪除'));
-
-    const finalExecution = (success) => {
-      isSuccess(success);
-      setTimeout(() => { deleteReset(success); }, 1000);
-    }; /** 放內部就不用使用 useCallback */
-
-    if (loadingState === '刪除中........') {
-      // webAPI.deletePost(postId) // 改變伺服器
-      //   .then(res => res.status < 300 && finalExecution(true))
-      //   .catch(() => finalExecution(false));
-      deletePost(postId)
-    }
-  }, [loadingState, changePosts, method, onHide, postId, deletePost]);
-  /**
-   * 讓刪除成功之後才利用 useEffect 去呼叫移除資料，可以監聽 redux 傳下來的 props
-   * 並且把 useEffect 拆開成兩個邏輯 1. 呼叫刪除的邏輯 2. 刪除成功或失敗的邏輯。
-   * 另一個是把刪除狀態的值放到 reudx，useEffect 的 dependency 等同於 prevPorp !== prop
-   */
-
   const handleDelete = () => setLoadingState('刪除中........');
+
+  useEffect(() => {
+    loadingState === '刪除中........' && deletePost(postId)
+  }, [loadingState])
+
+  useEffect(() => {
+    shouldGetPosts && setLoadingState('刪除成功！')
+  }, [shouldGetPosts])
+
+  useEffect(() => { // 有錯誤的值就顯示出來
+    if (error) {
+      setLoadingState(`刪除失敗 ${error}`)
+      setTimeout(() => { setLoadingState('是的，我要刪除') }, 1000);
+    };
+  }, [error]);
 
   return (
     <Modal size="lg" aria-labelledby="contained-modal-title-vcenter" centered {...{ onHide, show }}>

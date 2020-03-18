@@ -4,17 +4,18 @@ import './index.css';
 import { Provider } from 'react-redux';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import promise from 'redux-promise-middleware';
+import ReduxThunk from 'redux-thunk';
 import logger from 'redux-logger';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { postsReducer, wnidowReducer } from './reducer';
+import { postsReducer, windowReducer } from './reducer';
 
 const reducers = combineReducers({
   posts: postsReducer,
-  postState: wnidowReducer,
+  postState: windowReducer,
 });
 
-const store = createStore(reducers, applyMiddleware(promise, logger));
+const store = createStore(reducers, applyMiddleware(promise, ReduxThunk, logger));
 
 ReactDOM.render(
   <Provider store={store}>

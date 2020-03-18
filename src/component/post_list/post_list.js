@@ -47,13 +47,13 @@ const RenderPosts = ({ data, history, showManagementWindow }) => {
 };
 
 const Posts = ({
-  history, postsListData, showManagementWindow, getPosts, isLoadingGetPosts
+  history, postsListData, showManagementWindow, getPosts, shouldGetPosts
 }) => {
   const handleShowWindows = e => showManagementWindow({ method: e.target.name });
 
   useEffect(() => {
-    getPosts(); // 可能要改成 componentDidMount
-  }, [getPosts]);
+    shouldGetPosts && getPosts();
+  }, [getPosts, shouldGetPosts]); // 一開始 ture 會取得值，然後後續修改成功之後也會取得值
 
   return (
     <div className="blog">
@@ -67,7 +67,7 @@ const Posts = ({
       </header>
       <main className="blog__posts">
         {/** 判斷是否讀取中 */
-          !isLoadingGetPosts
+          postsListData.length
             ? <RenderPosts data={postsListData} {...{ history, showManagementWindow }} />
             : <Spinner animation="border" />
         }

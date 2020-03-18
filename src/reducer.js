@@ -1,109 +1,67 @@
 import * as actionTypes from './actionTypes';
 
-const postsState = {
+const postsInitState = {
   postsListData: [],
-  isLoadingGetPosts: false, // 是否取讀資料中
-  isProcessing: null,
+  shouldGetPosts: true, // 一開始要 render
+  error: '',
 };
 
-const windowState = {
-  method: '', // 研究一下是否改為一個動作一個 action 之後就不需要 method
+const windowInitState = {
+  method: '',
   show: false, // 是否顯現的值
   postId: null,
 };
 
-const postsReducer = (globalState = postsState, action) => {
-  const handleChangePosts = ({ method, thisPost, postId }) => {
-    /** 第一個變數是方式，第二個之後是變更的資料 */
-    const { postsListData } = globalState;
-    switch (method) {
-      case 'create': {
-        const id = postsListData.length !== 0 ? postsListData[0].id + 1 : 1;
-        return {
-          postsListData: [{
-            ...thisPost,
-            createdAt: new Date().getTime(), // 取得當前的 timestamp，有很大的機會跟伺服器上的不同
-            id, // 取得資料已經逆排序，所以取 index 0 的就是最後 id
-          },
-          ...postsListData, // 放後面才能符合逆排序
-          ],
-        };
-      }
-      case 'editing':
-        return {
-          postsListData: postsListData.map((post) => {
-            if (post.id !== thisPost.id) return post;
-            return {
-              ...post,
-              ...thisPost,
-            };
-          }),
-        };
-      case 'delete':
-        return {
-          postsListData: postsListData.filter(post => post.id !== postId),
-        };
-      default:
-        return null;
-    }
-    /** 把 call API 一種改成一個 action，然後也不必自己改資料，因為每次都是取得最新 */
-  };
-
+const postsReducer = (globalState = postsInitState, action) => {
   switch (action.type) {
-    case `${actionTypes.GET_POSTS}_PENDING`:
+    case actionTypes.CREATE_POST_FULFILLED:
       return {
         ...globalState,
-        isLoadingGetPosts: true,
+        shouldGetPosts: true, // 利用這個值的變化使文章列表自動取得資料
       };
-    case `${actionTypes.GET_POSTS}_FULFILLED`:
+    case actionTypes.CREATE_POST_REJECTED:
       return {
         ...globalState,
-        isLoadingGetPosts: false,
-        postsListData: action.payload.data // 篩選資料
+        error: action.err,
+      };
+    case actionTypes.GET_POSTS_FULFILLED:
+      return {
+        ...globalState,
+        postsListData: action.data // 篩選資料
           .filter(({ title, author, body }) => title && author && body),
+        shouldGetPosts: false,
       };
-    case actionTypes.UPDATE_POSTS_LIST:
-      return {
-        postsListData: action.posts,
-      };
-    case actionTypes.CHANGE_POSTS: // 待刪除
-      return handleChangePosts(action.post);
-    case `${actionTypes.CREATE_POST}_PENDING`:
-      console.log('創造_PENDING')
-      return null;
-    case `${actionTypes.CREATE_POST}_FULFILLED`:
-      console.log('創造_FULFILLED')
-      return null;
-
-    case actionTypes.DELETE_POST:
-      console.log('刪除', globalState, action)
+    case actionTypes.GET_POSTS_REJECTED:
       return {
         ...globalState,
-        // postsListData: globalState.postsListData.filter(post => post.id !== postId),
+        message: action.err,
       };
-    case `${actionTypes.DELETE_POST}_PENDING`:
-      console.log('刪除_PENDING', globalState, action)
+    case actionTypes.UPDATE_POST_FULFILLED:
       return {
         ...globalState,
-        isProcessing: 'delete',
+        shouldGetPosts: true,
       };
-    case `${actionTypes.DELETE_POST}_FULFILLED`:
-      console.log('刪除_FULFILLED', globalState, action)
+    case actionTypes.UPDATE_POST_REJECTED:
       return {
         ...globalState,
-        isProcessing: null,
-        // postsListData: globalState.postsListData.filter(post => post.id !== postId),
+        error: action.err,
+      };
+    case actionTypes.DELETE_POST_FULFILLED:
+      return {
+        ...globalState,
+        shouldGetPosts: true,
+      };
+    case actionTypes.DELETE_POST_REJECTED:
+      return {
+        ...globalState,
+        error: action.err,
       };
     default:
-      return globalState;
+      return { ...globalState, error: '' }; // 當做出其他操作就可以清空 error
   }
 };
-/** 除此之外還要多寫 reject 的反應 
- * 然後是有兩種方式一種是傳送成功之後呼叫改值的 action 
- * 另外一種就是修改了，會比較麻煩一點
-*/
 
-const wnidowReducer = (globalState = windowState, action) => {
+const windowReducer = (globalState = windowInitState, action) => {
   switch (action.type) {
     case actionTypes.SHOW_ARTICLE_MANAGEMENT_WINDOW:
       return {
@@ -112,11 +70,11 @@ const wnidowReducer = (globalState = windowState, action) => {
       };
     case actionTypes.HIDE_ARTICLE_MANAGEMENT_WINDOW:
       return {
-        ...windowState, // 把狀態還原
+        ...windowInitState, // 把狀態還原
       };
     default:
       return globalState;
   }
 };
 
-export { postsReducer, wnidowReducer };
+export { postsReducer, windowReducer };

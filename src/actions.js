@@ -1,37 +1,81 @@
-import * as action from './actionTypes';
+import * as actionTypes from './actionTypes';
 import * as WebAPI from './WebAPI';
 
+// CREATE
+export const createPost = (post) => (dispatch) => {
+  WebAPI.createPost(post)
+    .then(res => res.status <= 300 && dispatch(createPostFulfilled()))
+    .catch(err => dispatch(createPostRejected(err)));
+}
+
+export const createPostFulfilled = () => ({
+  type: actionTypes.CREATE_POST_FULFILLED,
+})
+
+export const createPostRejected = (err) => ({
+  type: actionTypes.CREATE_POST_REJECTED,
+  err,
+})
+
+// Read
 export const getPost = () => ({
-  type: action.GET_POST,
+  type: actionTypes.GET_POST,
   payload: WebAPI.getPost(),
 });
 
-export const getPosts = () => ({
-  type: action.GET_POSTS,
-  payload: WebAPI.getPosts(),
+export const getPostsList = () => dispatch => {
+  WebAPI.getPosts()
+    .then(res => dispatch(getPostsFulfilled(res.data)))
+    .catch(err => dispatch(getPostsRejected(err)));
+};
+
+export const getPostsFulfilled = (data) => ({
+  type: actionTypes.GET_POSTS_FULFILLED,
+  data,
 });
 
-export const updatePosts = posts => ({
-  type: action.UPDATE_POSTS_LIST,
-  posts,
+export const getPostsRejected = (err) => ({
+  type: actionTypes.GET_POSTS_REJECTED,
+  err,
 });
 
-export const deletePost = (id) => ({
-  type: action.DELETE_POST,
-  postId: id,
-  payload: WebAPI.deletePost(id),
+// UPDATA
+export const updatePost = post => dispatch => {
+  WebAPI.updatePost(post)
+    .then(res => res.status <= 300 && dispatch(updatePostFulfilled()))
+    .catch(err => dispatch(updatePostRejected(err)))
+}
+
+export const updatePostFulfilled = () => ({
+  type: actionTypes.UPDATE_POST_FULFILLED,
 });
 
-export const changePosts = post => ({
-  type: action.CHANGE_POSTS,
-  post,
+export const updatePostRejected = err => ({
+  type: actionTypes.UPDATE_POST_REJECTED,
+  err,
+});
+
+// DELETE
+export const deletePost = id => dispatch => {
+  WebAPI.deletePost(id)
+    .then(res => res.status <= 300 && dispatch(updatePostFulfilled()))
+    .catch(err => dispatch(updatePostRejected(err)))
+}
+
+export const deletePostFulfilled = () => ({
+  type: actionTypes.DELETE_POST_FULFILLED,
+});
+
+export const deletePostRejected = err => ({
+  type: actionTypes.DELETE_POST_REJECTED,
+  err,
 });
 
 export const showManagementWindow = postState => ({
-  type: action.SHOW_ARTICLE_MANAGEMENT_WINDOW,
+  type: actionTypes.SHOW_ARTICLE_MANAGEMENT_WINDOW,
   postState,
 });
 
 export const hideMangementWindow = () => ({
-  type: action.HIDE_ARTICLE_MANAGEMENT_WINDOW,
+  type: actionTypes.HIDE_ARTICLE_MANAGEMENT_WINDOW,
 });
