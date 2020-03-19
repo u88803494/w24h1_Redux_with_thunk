@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Modal } from 'react-bootstrap';
+import { Button, Modal, Form } from 'react-bootstrap';
 
 const DeleteWindow = ({
-  onHide, show, postId, deletePost, shouldGetPosts, error
+  onHide, show, postId, shouldGetPosts, error, deletePost
 }) => {
   const [loadingState, setLoadingState] = useState('是的，我要刪除');
 
@@ -18,7 +18,7 @@ const DeleteWindow = ({
 
   useEffect(() => { // 有錯誤的值就顯示出來
     if (error) {
-      setLoadingState(`刪除失敗 ${error}`)
+      setLoadingState(`刪除失敗！`)
       setTimeout(() => { setLoadingState('是的，我要刪除') }, 1000);
     };
   }, [error]);
@@ -32,6 +32,9 @@ const DeleteWindow = ({
       </Modal.Header>
       <Modal.Body>
         你確定要刪除文章嗎？
+        <Form.Text className="form__error">
+          {error && `刪除失敗：${error}`}
+        </Form.Text>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="outline-secondary" onClick={onHide}>

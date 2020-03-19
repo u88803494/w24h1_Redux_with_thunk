@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
 
 const EditingWindow = ({
-  show, method, onHide, createPost, error, defaultState, updatePost, shouldGetPosts
+  show, method, onHide, error, defaultState, createPost, updatePost
 }) => {
   const [thisPost, setThisPost] = useState(defaultState.post);
   const [isEmpty, setEmpty] = useState(defaultState.empty); // 為了一開始不偵測
