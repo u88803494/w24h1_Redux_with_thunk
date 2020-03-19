@@ -16,24 +16,25 @@ const EditingWindow = ({
     }
     setThisPost({ ...thisPost, [e.target.name]: e.target.value });
   };
-
+  // 改成 delete 的偵測形式，來改變按鈕好了。
   const handleSubmit = () => {
     if (!thisPost.title || !thisPost.author || !thisPost.body) {
-      setSubmitType({ canSubmit: false, status: '資料不全，無法送出，繼續完成資料才可送出' });
+      setSubmitType({ canSubmit: false, status: '資料不全，無法送出，繼續完成資料才可送出' , button: '無法送出'});
       return;
     }
+    // 這邊變成改狀態，另外建立一個 useEffect 監聽該變數，可以試試看能不能用解構，或是傳 obj 的子變數
     method === 'create' ? createPost(thisPost) : updatePost(thisPost);
   }; // 可加上 google CAPTCHA 驗證
 
   useEffect(() => {
     if (thisPost.title && thisPost.author && thisPost.body) {
       setSubmitType({ canSubmit: true, status: '' });
-    } // render 檢測值是否為空
+    } // render 後檢測值是否為空
   }, [thisPost]);
 
   useEffect(() => { // 有錯誤的值就顯示出來
     error && setSubmitType({ canSubmit: false, status: `發生問題無法送出 ${error}` });
-  }, [error]);
+  }, [error]); // 之後試試看把 status 的中文拉出來用變數儲存看看
 
   return (
     <Modal
@@ -110,16 +111,14 @@ const EditingWindow = ({
           <Button
             variant="outline-secondary"
             onClick={onHide}
-          >
-            Close
-          </Button>
+            children={'Close'} // 改成這樣省行數
+          />
           <Button
             variant="outline-primary"
             onClick={handleSubmit}
             disabled={!submitType.canSubmit}
-          >
-            {method === 'editing' ? '儲存文章' : '新增文章'}
-          </Button>
+            children={submitType.button}
+          />
         </Modal.Footer>
       </Form>
     </Modal>
