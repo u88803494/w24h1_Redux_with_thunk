@@ -10,6 +10,13 @@ export const updatePost = post => axios.put(`https://qootest.com/posts/${post.id
 
 export const deletePost = postId => axios.delete(`https://qootest.com/posts/${postId}`);
 
+// wrong API
+export const errorCreatePost = post => axios.post('https://qootest.com/poss/', post);
+
+export const errorUpdatePost = post => axios.put(`https://qootest.com/poss/${post.id}`, post);
+
+export const errorDeletePost = postId => axios.delete(`https://qootest.com/poss/${postId}`);
+
 /**
  * 當需要展示的時候，可以加上錯誤的 API，並加上按鈕。
  * 跟實際有作用的按鈕分開，這樣就可以很方便的展示。

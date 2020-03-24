@@ -1,9 +1,6 @@
-/* eslint-disable react/destructuring-assignment */
-/* eslint-disable import/no-unresolved */
-/* eslint-disable react/jsx-filename-extension */
-/* eslint-disable react/prop-types */
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 import { Button, Spinner } from 'react-bootstrap';
 import { getPost } from '../../WebAPI';
 import './post.css';
@@ -17,26 +14,24 @@ const ControllerButton = () => (
 );
 
 const ArticleContent = ({ post, date }) => (
-  <>
+  <article>
     <header className="article__header">
       <h1>{post.title}</h1>
       <div className="article__meta">
         <div className="article__info">
           <div className="article__author">
-作者：
-            {post.author}
+            作者：{post.author}
           </div>
           <div className="article__created-at">
-發布時間：
-            {date.toString()}
+            發布時間：{date.toString()}
           </div>
         </div>
         <ControllerButton />
       </div>
     </header>
     <hr />
-    <p className="article__body">{post.body}</p>
-  </>
+    <ReactMarkdown className="article__body" source={post.body} />
+  </article>
 );
 
 class Post extends Component {

@@ -20,12 +20,12 @@
 }
 
 .article__body {
-  white-space: pre-line;
+  word-break: break-word;
+  white-space: pre-wrap;
   padding: 0 30px;
-  margin: 10px 0;
 }
 
-@media only screen and (max-width: 768px) {
+@media screen and (max-width: 768px) {
   .article__meta {
     display: block;
   }

@@ -1,21 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
-import * as webAPI from '../../WebAPI';
 
 const EditingWindow = ({
-  show, method, postId, posts, onHide, changePosts,
+  show, method, onHide, error, defaultState, createPost, updatePost, shouldGetPosts, errorCreatePost, errorUpdatePost
 }) => {
-  /** show: 彈出視窗顯示與否，method: 文章送出要用的方法，postId、posts: 用來編輯的資料
-   * onHide: 關閉視窗用，changePosts: 上傳文章用 */
-
-  const newPost = { title: '', author: '', body: '' }; // 新增文章用的預設值
-  const editingPost = posts.find(post => post.id === postId); // 取得資料
-  const defaultEmpty = { title: false, author: false, body: false }; // 偵測文章是否為空的預設狀態
-  const defaultSubmitType = { canSubmit: true, status: '' }; // 是否可以提交的預設狀態
-
-  const [thisPost, setThisPost] = useState(postId ? editingPost : newPost);
-  const [isEmpty, setEmpty] = useState(defaultEmpty); // 為了一開始不偵測
-  const [submitType, setSubmitType] = useState(defaultSubmitType); // 一開始先不偵測
+  const [thisPost, setThisPost] = useState(defaultState.post);
+  const [isEmpty, setEmpty] = useState(defaultState.empty); // 為了一開始不偵測
+  const [submitType, setSubmitType] = useState(defaultState.submitType); // 一開始先不偵測
 
   const changePost = (e) => {
     if (!e.target.value) { // 輸入時確認是否為空
@@ -28,35 +19,41 @@ const EditingWindow = ({
 
   const handleSubmit = () => {
     if (!thisPost.title || !thisPost.author || !thisPost.body) {
-      setSubmitType({ canSubmit: false, status: '資料不全，無法送出，繼續完成資料才可送出' });
+      setSubmitType({ canSubmit: false, status: '資料不全，無法送出，繼續完成資料才可送出', button: '無法送出' });
       return;
     }
+    setSubmitType({ canSubmit: false, status: '', button: '傳送中' });
+  }; // 可加上 google CAPTCHA 驗證
 
-    const whichAPI = () => (method === 'create'
-      ? webAPI.createPost(thisPost) : webAPI.updatePost(thisPost));
+  const handleErrorSubmit = () => {
+    if (!thisPost.title || !thisPost.author || !thisPost.body) {
+      setSubmitType({ canSubmit: false, status: '資料不全，無法送出，繼續完成資料才可送出', button: '無法送出' });
+      return;
+    }
+    setSubmitType({ canSubmit: false, status: '', button: '傳送中.' });
+  }; // 可加上 google CAPTCHA 驗證
 
-    const submitPost = () => { // 像這個想詢問一下，可以往上獲取資料，我還需要特別傳入嗎？
-      changePosts({ method, thisPost }); // 改變 redux 上的 store
-      onHide(); /** 進一步可優化顯示傳送中，成功後顯示成功 */
-    };
+  useEffect(() => {
+    if (submitType.button === '傳送中') method === 'create' ? createPost(thisPost) : updatePost(thisPost);
+    if (submitType.button === '傳送中.') method === 'create' ? errorCreatePost(thisPost) : errorUpdatePost(thisPost);
+  }, [submitType.button, createPost, updatePost, method, thisPost, errorCreatePost, errorUpdatePost]);
 
-    const onError = (err) => {
-      setSubmitType({ canSubmit: false, status: `發生問題無法送出 ${err}` });
-    };
+  useEffect(() => {
+    shouldGetPosts && setSubmitType({ ...submitType, button: '傳送成功' });
+  }, [shouldGetPosts, submitType]);
 
-    whichAPI(thisPost, method)
-      .then(res => res.status <= 300 && submitPost(method, thisPost))
-      .catch(err => onError(err)); // .then .catch 是否會自己判斷 status?
-    /** 可加上 google CAPTCHA 驗證
-     * 之前曾經用過，之後可以加上個驗證功能
-    */
-  };
-
-  useEffect(() => { // 相當於 componenDidUpdate
+  useEffect(() => {
     if (thisPost.title && thisPost.author && thisPost.body) {
-      setSubmitType({ canSubmit: true, status: '' });
-    } // render 檢測值是否為空
-  }, [thisPost]);
+      setSubmitType({ canSubmit: true, status: '', button: '送出' });
+    };
+  }, [thisPost]); // render 後檢測值是否為空
+
+  useEffect(() => {
+    if (error) { // 有錯誤的值就顯示出來
+      setSubmitType({ canSubmit: false, status: `發生問題無法送出 ${error}`, button: '無法送出' });
+      setTimeout(() => setSubmitType({ canSubmit: true, status: '', button: '送出' }), 2000)
+    }
+  }, [error]);
 
   return (
     <Modal
@@ -104,7 +101,9 @@ const EditingWindow = ({
           </Form.Group>
           <Form.Group>
             <div className="form__datatype">
-              <Form.Label>內文</Form.Label>
+              <Form.Label>
+                內文
+              </Form.Label>
               <Form.Text className="form__empty">
                 {isEmpty.body && '內容不能為空'}
               </Form.Text>
@@ -113,29 +112,36 @@ const EditingWindow = ({
               name="body"
               as="textarea"
               rows="5"
-              placeholder="輸入內文"
+              placeholder="輸入內文 支援 markdown 格式"
               value={thisPost && thisPost.body}
               onChange={changePost}
             />
           </Form.Group>
-          <Form.Text className="form__empty form__empty--submit">
-            {submitType.status}
-          </Form.Text>
+          <div className="form__datatype">
+            <Form.Text className="form__notice">
+              {'支援 markdown 格式'}
+            </Form.Text>
+            <Form.Text className="form__empty form__empty--submit" children={submitType.status} />
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button
             variant="outline-secondary"
             onClick={onHide}
-          >
-            Close
-          </Button>
+            children={'Close'} // 改成這樣省行數
+          />
           <Button
             variant="outline-primary"
             onClick={handleSubmit}
             disabled={!submitType.canSubmit}
-          >
-            {method === 'editing' ? '儲存文章' : '新增文章'}
-          </Button>
+            children={submitType.button}
+          />
+          <Button
+            variant="outline-primary"
+            onClick={handleErrorSubmit}
+            disabled={!submitType.canSubmit}
+            children={`${submitType.button === '送出' ? '錯誤' : ""}` + submitType.button}
+          />
         </Modal.Footer>
       </Form>
     </Modal>

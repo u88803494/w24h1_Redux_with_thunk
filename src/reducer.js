@@ -1,82 +1,84 @@
-import {
-  UPDATE_POSTS_LIST,
-  CHANGE_POSTS,
-  SHOW_ARTICLE_MANAGEMENT_WINDOW,
-  HIDE_ARTICLE_MANAGEMENT_WINDOW,
-} from './actionTypes';
+import * as actionTypes from './actionTypes';
 
-const postsState = {
+const postsInitState = {
   postsListData: [],
+  shouldGetPosts: true, // 一開始要 render
+  error: '',
 };
 
-const windowState = {
+const windowInitState = {
   method: '',
   show: false, // 是否顯現的值
   postId: null,
 };
 
-const postsReducer = (globalState = postsState, action) => {
-  const handleChangePosts = ({ method, thisPost, postId }) => {
-    /** 第一個變數是方式，第二個之後是變更的資料 */
-    const { postsListData } = globalState;
-    switch (method) {
-      case 'create': {
-        const id = postsListData.length !== 0 ? postsListData[0].id + 1 : 1;
-        return {
-          postsListData: [{
-            ...thisPost,
-            createdAt: new Date().getTime(), // 取得當前的 timestamp，有很大的機會跟伺服器上的不同
-            id, // 取得資料已經逆排序，所以取 index 0 的就是最後 id
-          },
-          ...postsListData, // 放後面才能符合逆排序
-          ],
-        };
-      }
-      case 'editing':
-        return {
-          postsListData: postsListData.map((post) => {
-            if (post.id !== thisPost.id) return post;
-            return {
-              ...post,
-              ...thisPost,
-            };
-          }),
-        };
-      case 'delete':
-        return {
-          postsListData: postsListData.filter(post => post.id !== postId),
-        };
-      default:
-        return null;
-    }
-  };
-
+const postsReducer = (globalState = postsInitState, action) => {
   switch (action.type) {
-    case UPDATE_POSTS_LIST:
+    case actionTypes.CREATE_POST_FULFILLED:
       return {
-        postsListData: action.posts,
+        ...globalState,
+        shouldGetPosts: true, // 利用這個值的變化使文章列表自動取得資料
+        error: '',
       };
-    case CHANGE_POSTS:
-      return handleChangePosts(action.post);
+    case actionTypes.CREATE_POST_REJECTED:
+      return {
+        ...globalState,
+        error: action.err,
+      };
+    case actionTypes.GET_POSTS_FULFILLED:
+      return {
+        ...globalState,
+        postsListData: action.data // 篩選資料
+          .filter(({ title, author, body }) => title && author && body),
+        shouldGetPosts: false,
+        error: '',
+      };
+    case actionTypes.GET_POSTS_REJECTED:
+      return {
+        ...globalState,
+        message: action.err,
+      };
+    case actionTypes.UPDATE_POST_FULFILLED:
+      return {
+        ...globalState,
+        shouldGetPosts: true,
+        error: '',
+      };
+    case actionTypes.UPDATE_POST_REJECTED:
+      return {
+        ...globalState,
+        error: action.err,
+      };
+    case actionTypes.DELETE_POST_FULFILLED:
+      return {
+        ...globalState,
+        shouldGetPosts: true,
+        error: '',
+      };
+    case actionTypes.DELETE_POST_REJECTED:
+      return {
+        ...globalState,
+        error: action.err,
+      };
     default:
-      return globalState;
+      return { ...globalState, error: '' }; // 當做出其他操作就可以清空 error
   }
 };
 
-const wnidowReducer = (globalState = windowState, action) => {
+const windowReducer = (globalState = windowInitState, action) => {
   switch (action.type) {
-    case SHOW_ARTICLE_MANAGEMENT_WINDOW:
+    case actionTypes.SHOW_ARTICLE_MANAGEMENT_WINDOW:
       return {
         ...action.postState,
         show: true,
       };
-    case HIDE_ARTICLE_MANAGEMENT_WINDOW:
+    case actionTypes.HIDE_ARTICLE_MANAGEMENT_WINDOW:
       return {
-        ...windowState, // 把狀態還原
+        ...windowInitState, // 把狀態還原
       };
     default:
       return globalState;
   }
 };
 
-export { postsReducer, wnidowReducer };
+export { postsReducer, windowReducer };
