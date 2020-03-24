@@ -8,6 +8,12 @@ export const createPost = (post) => (dispatch) => {
     .catch(err => dispatch(createPostRejected(err)));
 }
 
+export const errorCreatePost = (post) => (dispatch) => {
+  WebAPI.errorCreatePost(post)
+    .then(res => res.status <= 300 && dispatch(createPostFulfilled()))
+    .catch(err => dispatch(createPostRejected(err)));
+}
+
 export const createPostFulfilled = () => ({
   type: actionTypes.CREATE_POST_FULFILLED,
 })
@@ -46,6 +52,12 @@ export const updatePost = post => dispatch => {
     .catch(err => dispatch(updatePostRejected(err)))
 }
 
+export const errorUpdatePost = post => dispatch => {
+  WebAPI.errorUpdatePost(post)
+    .then(res => res.status <= 300 && dispatch(updatePostFulfilled()))
+    .catch(err => dispatch(updatePostRejected(err)))
+}
+
 export const updatePostFulfilled = () => ({
   type: actionTypes.UPDATE_POST_FULFILLED,
 });
@@ -58,6 +70,12 @@ export const updatePostRejected = err => ({
 // DELETE
 export const deletePost = id => dispatch => {
   WebAPI.deletePost(id)
+    .then(res => res.status <= 300 && dispatch(updatePostFulfilled()))
+    .catch(err => dispatch(updatePostRejected(err)))
+}
+
+export const errorDeletePost = id => dispatch => {
+  WebAPI.errorDeletePost(id)
     .then(res => res.status <= 300 && dispatch(updatePostFulfilled()))
     .catch(err => dispatch(updatePostRejected(err)))
 }

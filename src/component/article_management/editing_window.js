@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
 
 const EditingWindow = ({
-  show, method, onHide, error, defaultState, createPost, updatePost, shouldGetPosts
+  show, method, onHide, error, defaultState, createPost, updatePost, shouldGetPosts, errorCreatePost, errorUpdatePost
 }) => {
   const [thisPost, setThisPost] = useState(defaultState.post);
   const [isEmpty, setEmpty] = useState(defaultState.empty); // 為了一開始不偵測
@@ -20,28 +20,38 @@ const EditingWindow = ({
   const handleSubmit = () => {
     if (!thisPost.title || !thisPost.author || !thisPost.body) {
       setSubmitType({ canSubmit: false, status: '資料不全，無法送出，繼續完成資料才可送出', button: '無法送出' });
-      setTimeout(() => setSubmitType(defaultState.submitType), 2000)
       return;
     }
-    setSubmitType({ canSubmit: false, status: '', button: '傳送中' })
+    setSubmitType({ canSubmit: false, status: '', button: '傳送中' });
+  }; // 可加上 google CAPTCHA 驗證
+
+  const handleErrorSubmit = () => {
+    if (!thisPost.title || !thisPost.author || !thisPost.body) {
+      setSubmitType({ canSubmit: false, status: '資料不全，無法送出，繼續完成資料才可送出', button: '無法送出' });
+      return;
+    }
+    setSubmitType({ canSubmit: false, status: '', button: '傳送中.' });
   }; // 可加上 google CAPTCHA 驗證
 
   useEffect(() => {
     if (submitType.button === '傳送中') method === 'create' ? createPost(thisPost) : updatePost(thisPost);
-  }, [submitType.button])
+    if (submitType.button === '傳送中.') method === 'create' ? errorCreatePost(thisPost) : errorUpdatePost(thisPost);
+  }, [submitType.button, createPost, updatePost, method, thisPost, errorCreatePost, errorUpdatePost]);
 
   useEffect(() => {
-    shouldGetPosts && setSubmitType({ ...submitType, button: '傳送成功' })
-  }, [shouldGetPosts])
+    shouldGetPosts && setSubmitType({ ...submitType, button: '傳送成功' });
+  }, [shouldGetPosts, submitType]);
 
   useEffect(() => {
-    if (thisPost.title && thisPost.author && thisPost.body) setSubmitType(defaultState.submitType);
+    if (thisPost.title && thisPost.author && thisPost.body) {
+      setSubmitType({ canSubmit: true, status: '', button: '送出' });
+    };
   }, [thisPost]); // render 後檢測值是否為空
 
   useEffect(() => {
     if (error) { // 有錯誤的值就顯示出來
       setSubmitType({ canSubmit: false, status: `發生問題無法送出 ${error}`, button: '無法送出' });
-      setTimeout(() => setSubmitType(defaultState.submitType), 2000)
+      setTimeout(() => setSubmitType({ canSubmit: true, status: '', button: '送出' }), 2000)
     }
   }, [error]);
 
@@ -125,6 +135,12 @@ const EditingWindow = ({
             onClick={handleSubmit}
             disabled={!submitType.canSubmit}
             children={submitType.button}
+          />
+          <Button
+            variant="outline-primary"
+            onClick={handleErrorSubmit}
+            disabled={!submitType.canSubmit}
+            children={`${submitType.button === '送出' ? '錯誤' : ""}` + submitType.button}
           />
         </Modal.Footer>
       </Form>

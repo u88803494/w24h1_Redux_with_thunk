@@ -18,6 +18,7 @@ const postsReducer = (globalState = postsInitState, action) => {
       return {
         ...globalState,
         shouldGetPosts: true, // 利用這個值的變化使文章列表自動取得資料
+        error: '',
       };
     case actionTypes.CREATE_POST_REJECTED:
       return {
@@ -30,6 +31,7 @@ const postsReducer = (globalState = postsInitState, action) => {
         postsListData: action.data // 篩選資料
           .filter(({ title, author, body }) => title && author && body),
         shouldGetPosts: false,
+        error: '',
       };
     case actionTypes.GET_POSTS_REJECTED:
       return {
@@ -40,6 +42,7 @@ const postsReducer = (globalState = postsInitState, action) => {
       return {
         ...globalState,
         shouldGetPosts: true,
+        error: '',
       };
     case actionTypes.UPDATE_POST_REJECTED:
       return {
@@ -50,6 +53,7 @@ const postsReducer = (globalState = postsInitState, action) => {
       return {
         ...globalState,
         shouldGetPosts: true,
+        error: '',
       };
     case actionTypes.DELETE_POST_REJECTED:
       return {

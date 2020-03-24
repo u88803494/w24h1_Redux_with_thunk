@@ -18,6 +18,9 @@ const mapDispatchToProps = dispatch => ({
   createPost: post => dispatch(actions.createPost(post)),
   updatePost: post => dispatch(actions.updatePost(post)),
   deletePost: id => dispatch(actions.deletePost(id)),
+  errorCreatePost: post => dispatch(actions.errorCreatePost(post)),
+  errorUpdatePost: post => dispatch(actions.errorUpdatePost(post)),
+  errorDeletePost: id => dispatch(actions.errorDeletePost(id)),
   showManagementWindow: showData => dispatch(actions.showManagementWindow(showData)),
   onHide: () => dispatch(actions.hideMangementWindow()),
 });

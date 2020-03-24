@@ -2,26 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
 
 const DeleteWindow = ({
-  onHide, show, postId, shouldGetPosts, error, deletePost, defaultState
+  onHide, show, postId, shouldGetPosts, error, deletePost, defaultState, errorDeletePost
 }) => {
   const [submitType, setSubmitType] = useState(defaultState.submitType);
 
   const handleDelete = () => setSubmitType({ canSubmit: false, status: '', button: '刪除中' });
+  const handleErrorDelete = () => setSubmitType({ canSubmit: false, status: '', button: '刪除中.' });
 
   useEffect(() => {
-    submitType.button === '刪除中' && deletePost(postId)
-  }, [submitType.button])
+    submitType.button === '刪除中' && deletePost(postId);
+    submitType.button === '刪除中.' && errorDeletePost(postId);
+  }, [submitType.button, deletePost, postId, errorDeletePost])
 
   useEffect(() => {
     shouldGetPosts && setSubmitType({ ...submitType, button: '刪除成功' })
-  }, [shouldGetPosts])
+  }, [shouldGetPosts, setSubmitType, submitType])
 
   useEffect(() => { // 有錯誤的值就顯示出來
     if (error) {
       setSubmitType({ canSubmit: false, status: `發生問題無法送出 ${error}`, button: '刪除失敗' })
       setTimeout(() => { setSubmitType(defaultState.submitType) }, 2000);
     };
-  }, [error]);
+  }, [error, defaultState.submitType]);
 
   return (
     <Modal size="lg" aria-labelledby="contained-modal-title-vcenter" centered {...{ onHide, show }}>
@@ -39,6 +41,12 @@ const DeleteWindow = ({
           onClick={handleDelete}
           disabled={!submitType.canSubmit}
           children={submitType.button}
+        />
+        <Button
+          variant="outline-danger"
+          onClick={handleErrorDelete}
+          disabled={!submitType.canSubmit}
+          children={`${submitType.button === '送出' ? '錯誤' : ""}` + submitType.button}
         />
       </Modal.Footer>
     </Modal>
