@@ -20,10 +20,12 @@ const ArticleContent = ({ post, date }) => (
       <div className="article__meta">
         <div className="article__info">
           <div className="article__author">
-            作者：{post.author}
+            作者：
+            {post.author}
           </div>
           <div className="article__created-at">
-            發布時間：{date.toString()}
+            發布時間：
+            {date.toString()}
           </div>
         </div>
         <ControllerButton />

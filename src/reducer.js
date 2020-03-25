@@ -15,12 +15,16 @@ const windowInitState = {
 const postsReducer = (globalState = postsInitState, action) => {
   switch (action.type) {
     case actionTypes.CREATE_POST_FULFILLED:
+    case actionTypes.UPDATE_POST_FULFILLED:
+    case actionTypes.DELETE_POST_FULFILLED:
       return {
         ...globalState,
         shouldGetPosts: true, // 利用這個值的變化使文章列表自動取得資料
         error: '',
       };
     case actionTypes.CREATE_POST_REJECTED:
+    case actionTypes.UPDATE_POST_REJECTED:
+    case actionTypes.DELETE_POST_REJECTED:
       return {
         ...globalState,
         error: action.err,
@@ -37,28 +41,6 @@ const postsReducer = (globalState = postsInitState, action) => {
       return {
         ...globalState,
         message: action.err,
-      };
-    case actionTypes.UPDATE_POST_FULFILLED:
-      return {
-        ...globalState,
-        shouldGetPosts: true,
-        error: '',
-      };
-    case actionTypes.UPDATE_POST_REJECTED:
-      return {
-        ...globalState,
-        error: action.err,
-      };
-    case actionTypes.DELETE_POST_FULFILLED:
-      return {
-        ...globalState,
-        shouldGetPosts: true,
-        error: '',
-      };
-    case actionTypes.DELETE_POST_REJECTED:
-      return {
-        ...globalState,
-        error: action.err,
       };
     default:
       return { ...globalState, error: '' }; // 當做出其他操作就可以清空 error
