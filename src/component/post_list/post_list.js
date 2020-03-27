@@ -52,7 +52,7 @@ const Posts = ({
   const handleShowWindows = e => showManagementWindow({ method: e.target.name });
 
   useEffect(() => {
-    shouldGetPosts && getPosts();
+    if (shouldGetPosts) getPosts();
   }, [getPosts, shouldGetPosts]); // 一開始 ture 會取得值，然後後續修改成功之後也會取得值
 
   return (
@@ -64,7 +64,7 @@ const Posts = ({
             新增文章
           </Button>
         </div>
-      </header>
+      </header>{ console.log(postsListData)}
       <main className="blog__posts">
         {/** 判斷是否讀取中 */
           postsListData.length

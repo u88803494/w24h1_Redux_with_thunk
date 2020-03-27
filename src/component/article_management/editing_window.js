@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
 
 const EditingWindow = ({
-  show, method, onHide, error, defaultState, createPost, updatePost, shouldGetPosts, errorCreatePost, errorUpdatePost
+  show, method, onHide, error, defaultState, createPost, updatePost, shouldGetPosts, errorCreatePost, errorUpdatePost,
 }) => {
   const [thisPost, setThisPost] = useState(defaultState.post);
   const [isEmpty, setEmpty] = useState(defaultState.empty); // 為了一開始不偵測
@@ -34,24 +34,32 @@ const EditingWindow = ({
   }; // 可加上 google CAPTCHA 驗證
 
   useEffect(() => {
-    if (submitType.button === '傳送中') method === 'create' ? createPost(thisPost) : updatePost(thisPost);
-    if (submitType.button === '傳送中.') method === 'create' ? errorCreatePost(thisPost) : errorUpdatePost(thisPost);
-  }, [submitType.button, createPost, updatePost, method, thisPost, errorCreatePost, errorUpdatePost]);
+    if (submitType.button === '傳送中') {
+      if (method === 'create') createPost(thisPost);
+      if (method === 'editing') updatePost(thisPost);
+    }
+    if (submitType.button === '傳送中.') {
+      if (method === 'create') errorCreatePost(thisPost);
+      if (method === 'editing') errorUpdatePost(thisPost);
+    }
+  }, [
+    submitType.button, createPost, updatePost, method, thisPost, errorCreatePost, errorUpdatePost,
+  ]);
 
   useEffect(() => {
-    shouldGetPosts && setSubmitType({ ...submitType, button: '傳送成功' });
+    if (shouldGetPosts) setSubmitType({ ...submitType, button: '傳送成功' });
   }, [shouldGetPosts, submitType]);
 
   useEffect(() => {
     if (thisPost.title && thisPost.author && thisPost.body) {
       setSubmitType({ canSubmit: true, status: '', button: '送出' });
-    };
+    }
   }, [thisPost]); // render 後檢測值是否為空
 
   useEffect(() => {
     if (error) { // 有錯誤的值就顯示出來
       setSubmitType({ canSubmit: false, status: `發生問題無法送出 ${error}`, button: '無法送出' });
-      setTimeout(() => setSubmitType({ canSubmit: true, status: '', button: '送出' }), 2000)
+      setTimeout(() => setSubmitType({ canSubmit: true, status: '', button: '送出' }), 2000);
     }
   }, [error]);
 
@@ -119,29 +127,31 @@ const EditingWindow = ({
           </Form.Group>
           <div className="form__datatype">
             <Form.Text className="form__notice">
-              {'支援 markdown 格式'}
+              支援 markdown 格式
             </Form.Text>
-            <Form.Text className="form__empty form__empty--submit" children={submitType.status} />
+            <Form.Text className="form__empty form__empty--submit">
+              {submitType.status}
+            </Form.Text>
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            variant="outline-secondary"
-            onClick={onHide}
-            children={'Close'} // 改成這樣省行數
-          />
+          <Button variant="outline-secondary" onClick={onHide}>
+            Close
+          </Button>
           <Button
             variant="outline-primary"
             onClick={handleSubmit}
             disabled={!submitType.canSubmit}
-            children={submitType.button}
-          />
+          >
+            {submitType.button}
+          </Button>
           <Button
             variant="outline-primary"
             onClick={handleErrorSubmit}
             disabled={!submitType.canSubmit}
-            children={`${submitType.button === '送出' ? '錯誤' : ""}` + submitType.button}
-          />
+          >
+            {`${submitType.button === '送出' ? '錯誤' : ''}${submitType.button}`}
+          </Button>
         </Modal.Footer>
       </Form>
     </Modal>

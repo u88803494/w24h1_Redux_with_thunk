@@ -7,12 +7,13 @@ const Item = ({ to, text, exact }) => (
   <Route
     path={to}
     exact={exact}
-    children={({ match }) => (
+  >
+    {({ match }) => (
       <Link to={to} className={`nav-link ${match ? 'active' : ''}`}>
         {text}
       </Link>
     )}
-  />
+  </Route>
 );
 
 class TheNavbar extends React.Component {
@@ -41,7 +42,8 @@ class TheNavbar extends React.Component {
    * 這部份跟移除 router 有關系，等到作業的最後再來處理就好
    */
   handleScroll = () => {
-    const lastPositonY = this.state.positionY; // 取得舊位置
+    const { positionY } = this.state;
+    const lastPositonY = positionY; // 取得舊位置
     this.setState({
       positionY: window.pageYOffset,
     }, () => this.calculateScrollWidth(lastPositonY)); // 取得新位置
